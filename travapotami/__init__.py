@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from .auth import auth_blueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -31,5 +32,7 @@ def create_app(test_config=None):
     @app.route('/bye')
     def bye():
         return 'Bye, World!'
+
+    app.register_blueprint(auth_blueprint)
 
     return app
