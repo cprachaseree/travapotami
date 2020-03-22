@@ -1,14 +1,16 @@
 import os
 from flask import Flask
 from .auth import auth_blueprint
+from . import db
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        #DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-        # should be replace by SQLAlchemy
+        SQLALCHEMY_DATABASE_URI='mysql://admin:admin@localhost/travapotami',
+        # for debugging
+        SQLALCHEMY_ECHO=True
     )
 
     if test_config is None:
@@ -23,9 +25,11 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    
+    db.init_app_command(app)
 
     # a simple page that says hello
-    @app.route('/')
+    @app.route('/hello')
     def hello():
         return 'Hello, World!'
 
