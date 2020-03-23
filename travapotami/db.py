@@ -1,2 +1,23 @@
-# Add SQLAlchemy here
-# https://flask.palletsprojects.com/en/1.1.x/patterns/sqlalchemy/
+from flask_sqlalchemy import SQLAlchemy
+import click
+from flask import current_app, g
+from flask.cli import with_appcontext
+
+def get_db():
+    if 'db' not in g:
+        g.db = SQLAlchemy(current_app)
+    return g.db
+
+def init_db():
+    from .models import User
+    db = get_db()
+    db.create_all()
+
+@click.command('init-db')
+@with_appcontext
+def init_db_command():
+    init_db()
+    click.echo('Initialized the database.')
+    
+def init_app_command(app):
+    app.cli.add_command(init_db_command)
