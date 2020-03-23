@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from .auth import auth_blueprint
+from .main import main_blueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -24,15 +25,12 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return 'Hello, World!'
 
     @app.route('/bye')
     def bye():
         return 'Bye, World!'
 
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(main_blueprint)
 
     return app

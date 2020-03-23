@@ -18,7 +18,8 @@
 <body>
     <header class="site-header">
         <nav class="teal">
-            <a href="#" class="brand-logo">Travapotami</a>
+            <a href="{{ url_for('main_blueprint.home') }}" class="brand-logo">Travapotami</a>
+            <a class="right" href="{{ url_for('auth_blueprint.login') }}">Login</a>
         </nav>
     </header>
     <main>
