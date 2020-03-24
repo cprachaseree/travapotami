@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Liu+Jian+Mao+Cao&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/styles.css">
-    <link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+    
     {% if title %}
         <title>Travapotami - {{ title }}</title>
     {% else %}
@@ -16,16 +18,42 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <nav class="teal">
-            <a href="{{ url_for('main_blueprint.home') }}" class="brand-logo">Travapotami</a>
-            <a class="right" href="{{ url_for('auth_blueprint.login') }}">Login</a>
-        </nav>
-    </header>
-    <main>
+
+    <nav class="teal nav_extended>
+        <div class="nav-wrapper">
+             
+            <a href="{{ url_for('main_blueprint.home') }}" class="brand-logo center"> 
+                <img src="../static/img/travapotami6.png" width="128" height="64"> T R A V A P O T A M I </a>
+            
+            <ul class="right">
+                <li>
+                    <div class="input-field">
+                        <input id="search" type="search" required>
+                        <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                        <i class="material-icons">close</i>
+                      </div>
+                </li>
+                <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
+              </ul>
+        </div>
+
+        <div class="teal nav-content">
+            <ul class="tabs tabs-transparent tabs-fixed-width">
+                <li class="tab">trips</li>
+                <li class="tab"><a href="#test2">find friends</a></li>
+                <li class="tab disabled"><a href="#test3">testing</a></li>
+                <li class="tab"><a href="{{  url_for('group_blueprint.create_group')  }}">group</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>    
         {% block content %}{% endblock content%}
     </main>
     <footer class="page-footer teal">
+        <ul class="tabs tabs-transparent tabs-fixed-width, center">
+            <li>The Chinese Univerisity of Hong Kong</li>
+        </ul>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
