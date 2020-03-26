@@ -12,6 +12,7 @@ main {
 
 h1 {
     font-family: 'Liu Jian Mao Cao', cursive;
+    text-shadow: 4px 4px 4px #aaa
 }
 
 h2 {
