@@ -13,8 +13,21 @@ main {
 
 h1 {
     font-family: 'Liu Jian Mao Cao', cursive;
+    font-size: 56px;
+    text-align: center;
 }
 
 h2 {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Baloo Da 2', cursive;
+    font-size: 36px;
+}
+
+h3 {
+    font-family: 'Baloo Da 2', cursive;
+    font-size: 20px;
+}
+
+h4 { 
+    font-family: 'Baloo Da 2', cursive;
+    font-size: 14px;
 }

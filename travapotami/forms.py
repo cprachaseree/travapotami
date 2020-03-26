@@ -254,14 +254,14 @@ class RegistrationForm(FlaskForm):
                                         validators= [DataRequired(), EqualTo('password')])
        first_name =  StringField('First name', validators=[DataRequired()])
        last_name =  StringField('Last name', validators=[DataRequired()])
-       gender = SelectField('Gender', validators=[DataRequired()],
-                                           choices=[('Male', 'Male'),
+       
+       gender = SelectField('Gender', [DataRequired()], 
+                                          choices=[('Male', 'Male'),
                                                     ('Female', 'Female'),
                                                     ('Transmale', 'Transmale'),
                                                     ('Transfemale', 'Transfemale'),
                                                     ('Genderqueer', 'Genderqueer'),
                                                     ('SomethingElse', 'Something else')])
-       
        passport_no = StringField('Passport number', validators=[DataRequired()])
        date_of_birth = DateField('Date of Birth', format='%Y-%m-%d')
        submit = SubmitField('Register')
@@ -270,3 +270,8 @@ class LoginForm(FlaskForm):
       username  = StringField('Username', validators=[DataRequired()])
       password = PasswordField('Password', validators=[DataRequired()])
       submit = SubmitField('Login')
+
+class ForgotPasswordForm(FlaskForm):
+      email = StringField('Email', validators=[DataRequired(), Email()])
+      passport_no = StringField('Passport number', validators=[DataRequired()])
+      submit = SubmitField('Confirm')
