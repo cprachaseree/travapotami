@@ -8,7 +8,9 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
-        'flasl-sqlalchemy',
-        'mysqlclient'
+        'flask-sqlalchemy',
+        'mysqlclient',
+        'flask_bcrypt',
+        'flask_login'
     ],
 )

@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, PasswordField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask import current_app, g
+from flask.cli import with_appcontext
 
 
 class TripForm(FlaskForm):
