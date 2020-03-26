@@ -1,6 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 <body bgcolor=#ffe3c0>
+    <style>
+        .slideshow-container {
+          position: relative;
+          margin: auto;
+        }
+        .fade {
+          animation-name: fade;
+          animation-duration: 3s;
+        }
+        @keyframes fade {
+          from {opacity: .5} 
+          to {opacity: 1}
+        }
+        .centered {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Liu Jian Mao Cao', cursive;
+            font-size: 72px;
+            text-align: center;
+            text-shadow: 4px 4px 4px #aaa;
+        }
+    </style>
+
+    <div class="slideshow-container">
+        <div class="slides fade">
+            <img src="../static/img/492683.jpg" style="width:100%">
+            <div class="centered">Let's Explore: <br>Reynisfjara Beach, Iceland</div>
+        </div>
+        <div class="slides fade">
+            <img src="../static/img/492681.jpg" style="width:100%">
+            <div class="centered">Let's Explore: <br>Ville-Marie, <br>Montreal</div>
+        </div>
+        <div class="slides fade">
+            <img src="../static/img/492682.jpg" style="width:100%">
+            <div class="centered">Let's Explore: <br>Cave and Basin National Historic Site, Alberta</div>
+        </div>
+        <div class="slides fade">
+            <img src="../static/img/492794.jpg" style="width:100%">
+            <div class="centered">Let's Explore: <br>Banff National Park, Alberta</div>
+        </div>
+        <div class="slides fade">
+            <img src="../static/img/492679.jpg" style="width:100%">
+            <div class="centered">Let's Explore: <br>Cienfuegos, Cuba</div>
+        </div>
+    </div>
+
+    <script>
+        var slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            var slides = document.getElementsByClassName("slides");
+            var i;
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) {
+                slideIndex = 1
+                }    
+            slides[slideIndex-1].style.display = "block";  
+            setTimeout(showSlides, 4000);
+        }
+    </script>
+
     <br>
     <div class="content-section, center, container">
         <h1>Hippopotami live in groups of 15 or more animals.</h1>
