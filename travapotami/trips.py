@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, flash, redirect, request
-from forms import TripForm
+from .forms import TripForm
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
 
 
