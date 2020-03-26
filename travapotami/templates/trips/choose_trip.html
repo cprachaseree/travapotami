@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<style type="text/css">
+
+    .row{
+        margin: 40px auto;
+    }
+</style>
+<div class="content-section">
+    <br>
+    <div class="container">
+        <h1 class="center">What do you want to do?</h1>
+        <br>
+        <br>
+        <div class="row">
+            <a href="{{  url_for('trips_blueprint.create_trip')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Become the host of a brand new trip!">Create a Trip</a>
+            <a class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Find a new adventure to embark on!">Join a Trip</a>
+            <a class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Take a look at your current trips!">My Trips</a>
+        </div>
+
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+    $('.tooltipped').tooltip();
+  });
+</script>
+{% endblock content %}
+
