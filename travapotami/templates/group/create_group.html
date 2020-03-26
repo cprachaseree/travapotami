@@ -4,21 +4,63 @@
     <br>
     <div class="container">
         <h1 class="center">let's create a group!</h1>
-        <form>
-            <div class="input-field ">
-                <input placeholder="Placeholder" id="first_name" type="text" class="validate">
-                <label for="first_name">Group Name</label>
+        <form action="/create_group" method="POST">
+            <div class="input-field">
+                <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required>
+                <label for="group_name">Group Name</label>
             </div>
+
             <!-- Switch -->
             <div class="switch">
                 <label>
                 Private
-                <input type="checkbox">
+                <input class="input-field" type="checkbox" name="accessibility">
                 <span class="lever"></span>
                 Public
                 </label>
-            </div>    
+            </div>
+
+            <p>Enter your group mates' username(s)</p>
+            <div id="members">
+                <div class="input-field row" id="div_1">
+                    <input id="member_1" class="col s8" type="text" name="member_1" class="validate">
+                    <label for="Member">Member</label>
+                    <a onclick="removeMem(this)" class="btn-floating waves-effect waves-light"><i class="material-icons">delete</i></a>
+                </div>
+            </div>
+            <a id="add-btn" class="btn-floating waves-effect waves-light"><i class="material-icons">add</i></a>
+            <p>    </p>
+            <div id="result"></div>
+            <button class="btn waves-effect waves-light" type="submit">Create Group
+                <i class="material-icons right">send</i>
+            </button>
         </form>
+        
     </div>
 </div>
+
+<script>
+     function removeMem(button) {
+         $(button).parent().remove()
+     }
+
+    $(document).ready(function() {
+        var inputs = 1;
+        $("#1").on('click', function() {
+            $("#div_1").remove()
+        })
+        $("#add-btn").on('click', function() {
+            inputs++;
+            $("#members").append(`
+                <div class="input-field row" id="div_${inputs}">
+                    <input id="member_${inputs}" class="col s8" type="text" name="member_${inputs}"  class="validate">
+                    <label for="Member">Member</label>
+                    <a onclick="removeMem(this)" class="btn-floating waves-effect waves-light"><i class="material-icons">delete</i></a>
+                </div>`);
+        });
+        
+    });
+
+</script>
+
 {% endblock content %}

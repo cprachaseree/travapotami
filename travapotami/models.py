@@ -76,6 +76,8 @@ class Rating(db.Model):
 class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+    # accessibility is public or private
+    public = db.Column(db.Boolean)
     admins = db.relationship('User', secondary=group_admin)
     mates = db.relationship('User', secondary=group_mate)
     trips = db.relationship('Trip', backref='group') # ongoing and past trip will be distinguished by Trip.finished instead
