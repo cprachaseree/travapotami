@@ -9,21 +9,19 @@
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Liu+Jian+Mao+Cao&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/styles.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     {% if title %}
         <title>Travapotami - {{ title }}</title>
     {% else %}
         <title>Travapotami</title>
     {% endif %}
 </head>
-
 <body>
 
-    <nav class="teal nav_extended>
+    <nav class="teal nav_extended">
         <div class="nav-wrapper">
-
             <a href="{{ url_for('main_blueprint.home') }}" class="brand-logo center">
-                <img src="../static/img/travapotami6.png" width="128" height="64"> T R A V A P O T A M I </a>
+            <img src="../static/img/travapotami6.png" width="128" height="64"> T R A V A P O T A M I </a>
 
             <ul class="right">
                 <li>
@@ -34,6 +32,7 @@
                       </div>
                 </li>
                 <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth_blueprint.register') }}">Register</a></li>
               </ul>
         </div>
 
@@ -44,13 +43,12 @@
                 <li class="tab disabled"><a href="#test3">testing</a></li>
                 <li class="tab"><a href="{{  url_for('group_blueprint.create_group')  }}">group</a></li>
 
-
             </ul>
         </div>
     </nav>
-
+    
     <main>
-
+        
         {% block content %}{% endblock content%}
 
     </main>
@@ -59,7 +57,19 @@
             <li>The Chinese Univerisity of Hong Kong</li>
         </ul>
     </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!--Message flashing by using flash(message)-->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <script>
+                        var msg = '{{ message }}'
+                        M.toast({ html: msg });
+                    </script>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 
 </html>
