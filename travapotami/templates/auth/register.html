@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <h2>Register</h2>
+        <form method="POST" action="">
+            {% for field in form %}
+                {% if field.type != "SubmitField" %}
+                    <div class="input-field">
+                    {% if field.type == "SelectField" %}
+                        <select name='{{ field }}'>
+                            {% for key, value, checked in field.iter_choices() %}
+                                <option value='{{ value }}'>1</option>
+                            {% endfor %}
+                        </select>
+                        <label>{{ field.label }}</label>
+                    {% else %}
+                        {{ field }}
+                        <label>{{ field.label }}</label>
+                    {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="btn waves-effect waves-light">
+                {{form.submit()}}
+                <i class="material-icons right">send</i>
+            </div>
+        </form>
+        <p>Forgot Password</p>
+    </div>
+</div>
+{% endblock content %}

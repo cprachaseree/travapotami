@@ -3,18 +3,18 @@
 <div class="content-section">
     <div class="container">
         <h2>Login</h2>
-        <form>
-            <div class="input-field col s6">
-                <input id="first_name" type="text" class="validate">
-                <label for="first_name">Username</label>
+        <form action="" method="POST">
+            <div class="input-field ">
+                {{form.username}}
+                <label >{{form.username.label}}</label>
             </div>
-            <div class="input-field col s6">
-                <input id="last_name" type="password" class="validate">
-                <label for="last_name">Password</label>
+            <div class="input-field ">
+                {{form.password}}
+                <label>{{form.password.label}}</label>
             </div>
-            <button class="btn waves-effect waves-light" type="submit" name="action">Login
-                <i class="material-icons right">send</i>
-            </button>
+            <div class="btn waves-effect waves-light">
+                {{form.submit()}}
+            </div>
         </form>
         <p>Forgot Password</p>
     </div>

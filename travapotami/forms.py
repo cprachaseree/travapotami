@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
+from wtforms import StringField, SelectField, SubmitField, PasswordField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 
 class TripForm(FlaskForm):
@@ -244,3 +244,29 @@ class TripForm(FlaskForm):
       datebegin = DateField('Begin Date', format='%Y-%m-%d')
       dateend = DateField('End Date', format='%Y-%m-%d')
       submit = SubmitField('Create')
+
+
+class RegistrationForm(FlaskForm):
+       username  = StringField('Username', validators=[DataRequired()])
+       email = StringField('Email', validators=[DataRequired(), Email()])
+       password = PasswordField('Password', validators=[DataRequired()])
+       confirm_password = PasswordField('Confirm Password',
+                                        validators= [DataRequired(), EqualTo('password')])
+       first_name =  StringField('First name', validators=[DataRequired()])
+       last_name =  StringField('Last name', validators=[DataRequired()])
+       gender = SelectField('Gender', validators=[DataRequired()],
+                                           choices=[('Male', 'Male'),
+                                                    ('Female', 'Female'),
+                                                    ('Transmale', 'Transmale'),
+                                                    ('Transfemale', 'Transfemale'),
+                                                    ('Genderqueer', 'Genderqueer'),
+                                                    ('SomethingElse', 'Something else')])
+       
+       passport_no = StringField('Passport number', validators=[DataRequired()])
+       date_of_birth = DateField('Date of Birth', format='%Y-%m-%d')
+       submit = SubmitField('Register')
+
+class LoginForm(FlaskForm):
+      username  = StringField('Username', validators=[DataRequired()])
+      password = PasswordField('Password', validators=[DataRequired()])
+      submit = SubmitField('Login')
