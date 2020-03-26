@@ -33,7 +33,7 @@
                         <i class="material-icons">close</i>
                       </div>
                 </li>
-                <li> 
+                <li>
                     <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">notifications</i></a>
                 </li>
                 <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
@@ -51,7 +51,7 @@
             </ul>
         </div>
     </nav>
-    
+
     <main>
         <br>
         <br>
@@ -63,6 +63,9 @@
             <li>The Chinese Univerisity of Hong Kong</li>
         </ul>
     </footer>
+
+     <!--Don't delete the scrip below cause without it some functions dont work -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!--Message flashing by using flash(message)-->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
