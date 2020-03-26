@@ -3,6 +3,7 @@ from flask import Flask
 from .auth import auth_blueprint
 from .main import main_blueprint
 from .group import group_blueprint
+from .trips import trips_blueprint
 from . import db
 
 def create_app(test_config=None):
@@ -37,5 +38,6 @@ def create_app(test_config=None):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(group_blueprint)
+    app.register_blueprint(trips_blueprint)
 
     return app

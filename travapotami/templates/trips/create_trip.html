@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <br>
+        <br>
+        <h3>Create your trip:</h3>
+        <form action="" method="POST">
+
+            <div class="input-field ">
+                {{form.tripname}}
+                <label >{{form.tripname.label}}</label>
+            </div>
+            <div class="input-field ">
+                {{form.destination}}
+                <label>{{form.destination.label}}</label>
+            </div>
+            <div class="input-field ">
+                {{form.datebegin}}
+                <label >Starting Date</label>
+            </div>
+            <div class="input-field ">
+                {{form.dateend}}
+                <label >Ending Date</label>
+            </div>
+            <br>
+            <div class="btn waves-effect waves-light">
+                {{form.submit()}}
+            </div>
+
+
+        </form>
+    </div>
+
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function(){
+    $('select').formSelect();
+    });
+</script>
+
+
+
+
+
+{% endblock content %}
+
+
