@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <br>
+    <h3>Click on the card to reveal more infomation.</h3>
     <div class="row">
-        <br>
-        <h2>Click on the card to reveal more infomation.</h2>
-
         <div class="col s12 m4">
             <div class="card">
                 <div class="card-image waves-effect waves-block waves-light">
@@ -53,6 +52,17 @@
             </div>
         </div>
     </div>
+
+    <ul class="pagination center">
+        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+        <li class="active teal"><a href="#!">1</a></li>
+        <li class="waves-effect"><a href="#!">2</a></li>
+        <li class="waves-effect"><a href="#!">3</a></li>
+        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      </ul>
+
 </div>
+
+
           
 {% endblock content %}

@@ -20,9 +20,10 @@ def create_group():
         usernames = []
         # get usernames from the form
         for x in request.form:
-            if x == "groupname" or not request.form[x]:
+            if x == "groupname" or not request.form[x] or request.form[x] == 'on':
                 continue
             usernames.append(request.form[x])
+        flash(usernames)
         flash(f"{group_name} is created with {len(usernames)+1} member(s).")
         # TODO find userid of all users with the given username and add to the group
         return render_template('./group/create_group.html')
