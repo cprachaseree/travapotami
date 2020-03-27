@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
 from .forms import RegistrationForm, LoginForm, ForgotPasswordForm
 from . import bcrypt
@@ -6,6 +7,8 @@ from . import bcrypt
 # Registration page
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
     form = RegistrationForm()
     if request.method == 'POST':
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -31,14 +34,24 @@ def register():
 # Login Page
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
     form = LoginForm()
     if request.method == 'POST':
-        flash("Successfully logged in. Redirected to main.")
-        return redirect('/')
+        # for testing
+        # validate user
+        #if validate:
+            #user = "USER"
+            #login_user(user)
+            #flash("Successfully logged in. Redirected to main.")
+        return redirect(url_for('main.home'))
+        #else:
+            # flash("Unsuccessful log in. Please try again.")
     return render_template('./auth/login.html', title='Login', form=form)
 
 # Logout
 @auth_blueprint.route('/logout')
+@login_required
 def logout():
    
     return render_template('./auth/logout.html', title='Logout')
@@ -53,5 +66,6 @@ def forgetpassword():
 
 # Edit usr information
 #@auth_blueprint.route('/edit_user')
+#@login_required
 def edit_user():
 	pass
