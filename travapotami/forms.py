@@ -257,13 +257,13 @@ class RegistrationForm(FlaskForm):
        first_name = StringField('First name', validators=[DataRequired()])
        last_name = StringField('Last name', validators=[DataRequired()])
 
-       gender = SelectField('Gender', [DataRequired()],
-                            choices=[('Male', 'Male'),
+       gender = SelectField('Gender', choices=[('Male', 'Male'),
                                      ('Female', 'Female'),
                                      ('Transmale', 'Transmale'),
                                      ('Transfemale', 'Transfemale'),
                                      ('Genderqueer', 'Genderqueer'),
                                      ('SomethingElse', 'Something else')])
+                                     
        passport_no = StringField('Passport number', validators=[DataRequired()])
        date_of_birth = DateField('Date of Birth', format='%Y-%m-%d')
        submit = SubmitField('Register')
