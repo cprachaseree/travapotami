@@ -7,8 +7,8 @@ from . import bcrypt
 # Registration page
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+    #if current_user.is_authenticated:
+        #return redirect(url_for('main.home'))
     form = RegistrationForm()
     if request.method == 'POST':
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -34,8 +34,8 @@ def register():
 # Login Page
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+    #if current_user.is_authenticated:
+        #return redirect(url_for('main.home'))
     form = LoginForm()
     if request.method == 'POST':
         # for testing

@@ -36,12 +36,8 @@
                 <li>
                     <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">notifications</i></a>
                 </li>
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth_blueprint.logout') }}">Logout</a></li>
-                {% else %}
                 <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
                 <li><a href="{{ url_for('auth_blueprint.register') }}">Register</a></li>
-                {% endif %}
               </ul>
         </div>
 
