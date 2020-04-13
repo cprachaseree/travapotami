@@ -1,8 +1,14 @@
 from .db import get_db
 from enum import Enum
 from datetime import date
+from flask_login import UserMixin
+from . import login_manager
 
 db = get_db()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # tables needed for many-to-many relationship
 group_admin = db.Table('group_admin',
@@ -18,6 +24,7 @@ trip_participant = db.Table('trip_participant',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('trip_id', db.Integer, db.ForeignKey('trip.id'), primary_key=True))
 
+
 class Gender(Enum):
 
     Male = 1
@@ -27,7 +34,7 @@ class Gender(Enum):
     Genderqueer = 5
     SomethingElse = 6
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)

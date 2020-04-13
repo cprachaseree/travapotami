@@ -1,10 +1,10 @@
 import os
 from flask import Flask
 from . import db
-
 from flask_login import LoginManager
-#login_manager = LoginManager()
 from flask_bcrypt import Bcrypt
+
+login_manager = LoginManager()
 bcrypt = Bcrypt()
 
 def create_app(test_config=None):
@@ -32,15 +32,16 @@ def create_app(test_config=None):
     
     db.init_app_command(app)
     bcrypt.init_app(app)
-    #login_manager.init_app(app)
-    
-    from .auth import auth_blueprint
-    from .main import main_blueprint
-    from .group import group_blueprint
-    from .trips import trips_blueprint
-    app.register_blueprint(auth_blueprint)
-    app.register_blueprint(main_blueprint)
-    app.register_blueprint(group_blueprint)
-    app.register_blueprint(trips_blueprint)
+    login_manager.init_app(app)
+
+    with app.app_context():
+        from .auth import auth_blueprint
+        from .main import main_blueprint
+        from .group import group_blueprint
+        from .trips import trips_blueprint
+        app.register_blueprint(auth_blueprint)
+        app.register_blueprint(main_blueprint)
+        app.register_blueprint(group_blueprint)
+        app.register_blueprint(trips_blueprint)
 
     return app

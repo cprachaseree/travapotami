@@ -36,8 +36,12 @@
                 <li>
                     <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">notifications</i></a>
                 </li>
-                <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
-                <li><a href="{{ url_for('auth_blueprint.register') }}">Register</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('auth_blueprint.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth_blueprint.register') }}">Register</a></li>
+                {% endif %}
               </ul>
         </div>
 
@@ -46,7 +50,7 @@
                 <li class="tab"><a href="{{  url_for('trips_blueprint.choose_trip')  }}">trips</a></li>
                 <li class="tab"><a href="#test2">find friends</a></li>
                 <li class="tab"><a href="{{  url_for('group_blueprint.choose_group')  }}">groups</a></li>
-                <li class="tab"><a href="#test2">my profile</a></li>
+                <li class="tab"><a href="{{  url_for('auth_blueprint.edit_account')  }}">my profile</a></li>
 
             </ul>
         </div>
@@ -60,7 +64,7 @@
     </main>
     <footer class="page-footer teal">
         <ul class="tabs tabs-transparent tabs-fixed-width, center">
-            <li>The Chinese Univerisity of Hong Kong</li>
+            <li>The Chinese University of Hong Kong</li>
         </ul>
     </footer>
 

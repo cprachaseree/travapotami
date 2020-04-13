@@ -4,6 +4,7 @@
     <div class="container">
         <h2>Login</h2>
         <form action="" method="POST">
+            {{ form.csrf_token }}
             <div class="input-field ">
                 {{form.username}}
                 <label >{{form.username.label}}</label>

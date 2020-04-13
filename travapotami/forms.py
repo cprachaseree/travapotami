@@ -264,8 +264,8 @@ class RegistrationForm(FlaskForm):
                                      ('Genderqueer', 'Genderqueer'),
                                      ('SomethingElse', 'Something else')])
                                      
-       passport_no = StringField('Passport number', validators=[DataRequired()])
-       date_of_birth = DateField('Date of Birth', format='%Y-%m-%d')
+       passport_number = StringField('Passport number', validators=[DataRequired()])
+       birthday = DateField('Date of Birth', format='%Y-%m-%d')
        submit = SubmitField('Register')
 
 
@@ -273,6 +273,28 @@ class LoginForm(FlaskForm):
        username = StringField('Username', validators=[DataRequired()])
        password = PasswordField('Password', validators=[DataRequired()])
        submit = SubmitField('Login')
+
+class UpdateAccountInfo(FlaskForm):
+       username = StringField('Username', validators=[DataRequired()])
+       email = StringField('Email', validators=[DataRequired(), Email()])
+       first_name = StringField('First name', validators=[DataRequired()])
+       last_name = StringField('Last name', validators=[DataRequired()])
+
+       gender = SelectField('Gender', choices=[('Male', 'Male'),
+                                               ('Female', 'Female'),
+                                               ('Transmale', 'Transmale'),
+                                               ('Transfemale', 'Transfemale'),
+                                               ('Genderqueer', 'Genderqueer'),
+                                               ('SomethingElse', 'Something else')])
+
+       passport_number = StringField(
+           'Passport number', validators=[DataRequired()])
+       birthday = DateField('Date of Birth', format='%Y-%m-%d')
+       password = PasswordField('Password', validators=[DataRequired()])
+       confirm_password = PasswordField('Confirm Password',
+                                        validators=[DataRequired(), EqualTo('password')])
+       submit = SubmitField('Update')
+       cancel = SubmitField('Cancel')
 
 
 class ForgotPasswordForm(FlaskForm):
