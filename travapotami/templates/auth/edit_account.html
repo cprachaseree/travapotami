@@ -6,7 +6,7 @@
         <form action="" method="POST">
             {{ form.csrf_token }}
             {% for field in form %}
-            {% if field.type != "SubmitField" and field.type != "PasswordField" %}
+            {% if field.type != "SubmitField" and field.type != "PasswordField" and field.widget.input_type != 'hidden' %}
             <div class="input-field">
                 {{ field }}
                 <label>{{ field.label }}</label>
@@ -14,29 +14,34 @@
             <br>
             {% endif %}
             {% endfor %}
-            <p>Enter your password to Confirm</p>
-            <div class="input-field">
-                {{ form.password }}
-                <label>{{ form.password.label }}</label>
+            <div class="section">
+                <p>Enter your password to Confirm</p>
+                <div class="input-field">
+                    {{ form.password }}
+                    <label>{{ form.password.label }}</label>
+                </div>
+                <div class="input-field">
+                    {{ form.confirm_password }}
+                    <label>{{ form.confirm_password.label }}</label>
+                </div>
             </div>
-            <div class="input-field">
-                {{ form.confirm_password }}
-                <label>{{ form.confirm_password.label }}</label>
-            </div>
+            
             
             <div class="btn waves-effect waves-light">
                 {{form.submit()}}
                 <i class="material-icons right">send</i>
             </div>
+            <div class="btn waves-effect waves-light">
+                <a style="color: black"
+                    href="{{  url_for('auth_blueprint.display_account', username=current_user.username)  }}">Cancel
+                    <i style="color: white" class="material-icons right">cancel</i>
+                </a>
+            </div>
         </form>
         <br>
-        <div class="btn waves-effect waves-light">
-            <a style="color: black" href="{{  url_for('main_blueprint.home')  }}">Cancel
-            <i class="material-icons right">block</i>
-            </a>
-            
-        </div>
+        
     </div>
+    <br>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script>

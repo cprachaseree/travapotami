@@ -301,3 +301,7 @@ class ForgotPasswordForm(FlaskForm):
        email = StringField('Email', validators=[DataRequired(), Email()])
        passport_no = StringField('Passport number', validators=[DataRequired()])
        submit = SubmitField('Confirm')
+
+class SearchUsersForm(FlaskForm):
+       username = StringField('Search User by username', validators=[DataRequired()])
+       submit = SubmitField('Search')

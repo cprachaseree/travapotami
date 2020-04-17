@@ -1,4 +1,4 @@
-from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo
+from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -66,7 +66,7 @@ def forgetpassword():
 def edit_account():
     form = UpdateAccountInfo()
     if form.validate_on_submit():
-        if bcrypt.generate_password_hash(current_user.password, form.password.data):
+        if bcrypt.check_password_hash(current_user.password, form.password.data):
             current_user.username = form.username.data
             current_user.email = form.email.data
             current_user.first_name = form.first_name.data
@@ -76,7 +76,8 @@ def edit_account():
             current_user.birthday = form.birthday.data
             db.session.commit()
             flash('Your account has been updated!')
-            return redirect(url_for('main_blueprint.home'))
+            return redirect(url_for('auth_blueprint.display_account',
+                                    username=current_user.username))
         else:
             flash('Incorrect password. Please try again or cancel.')
             return redirect(url_for('auth_blueprint.edit_account'))
@@ -89,3 +90,26 @@ def edit_account():
         form.passport_number.data = current_user.passport_number
         form.birthday.data = current_user.birthday
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
+
+# display user
+@auth_blueprint.route('/user/<string:username>', methods=['GET'])
+@login_required
+def display_account(username):
+    user = User.query.filter_by(username=username).first()
+    is_current = False
+    if current_user == user:
+        is_current = True
+    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current)
+
+
+@auth_blueprint.route('/search_users', methods=['GET', 'POST'])
+def search_users():
+    form = SearchUsersForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user != None:
+            return redirect(url_for('auth_blueprint.display_account', username=username))
+        else:
+            flash("Username does not exist!")
+    return render_template('./auth/search_users.html', title="Search Users", form=form)

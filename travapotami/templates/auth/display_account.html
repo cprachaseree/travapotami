@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <br>
+    <h1 class="container">{{ user.username }}'s Profile</h1>
+    <br>
+    <table class="responsive-table container">
+        <tr>
+            <th>
+                First name
+            </th>
+            <td>
+                {{ user.first_name }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Last name
+            </th>
+            <td>
+                {{ user.last_name }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Email
+            </th>
+            <td>
+                {{ user.email }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Gender
+            </th>
+            <td>
+                {{ user.gender }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Birthday
+            </th>
+            <td>
+                {{ user.birthday }}
+            </td>
+        </tr>
+    </table>
+    {% if is_current %}
+        <br>
+        <div class="container">
+            <div class="btn waves-effect waves-light">
+                <a style="color:white" href="{{  url_for('auth_blueprint.edit_account')  }}">Edit Account</a>
+                <i class="material-icons right">send</i>
+            </div>
+        </div>
+        <br>
+    {% else %}
+        <br>
+        <div class="container">
+            <div class="btn waves-effect waves-light">
+                <a style="color:white" href="#">Add as friend</a>
+            </div>
+        </div>
+        <br>
+    {% endif %}
+</div>
+{% endblock content %}

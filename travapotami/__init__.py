@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from . import db
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
@@ -43,5 +43,8 @@ def create_app(test_config=None):
         app.register_blueprint(main_blueprint)
         app.register_blueprint(group_blueprint)
         app.register_blueprint(trips_blueprint)
+        @app.errorhandler(404)
+        def page_not_found(e):
+            return render_template('404.html'), 404
 
     return app
