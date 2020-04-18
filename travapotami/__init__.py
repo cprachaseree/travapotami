@@ -14,7 +14,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI='mysql://admin:admin@localhost/travapotami',
         # for debugging
-        SQLALCHEMY_ECHO=True
+        SQLALCHEMY_ECHO=True,
+        SQLALCHEMY_TRACK_MODIFICATIONS=False
     )
 
     if test_config is None:
