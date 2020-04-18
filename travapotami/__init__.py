@@ -33,7 +33,7 @@ def create_app(test_config=None):
     db.init_app_command(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-
+    
     with app.app_context():
         from .auth import auth_blueprint
         from .main import main_blueprint

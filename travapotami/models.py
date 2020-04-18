@@ -50,7 +50,7 @@ class User(db.Model, UserMixin):
     nationality = db.Column(db.String(64)) # to be changed
     languages = db.Column(db.String(64)) # to be changed
     email = db.Column(db.String(64), nullable=False)
-    photo = db.Column(db.LargeBinary)
+    photo = db.Column(db.LargeBinary(length=2**32-1))
     passport_number = db.Column(db.String(16), nullable=False)
 
     def __init__(self, **kwargs):

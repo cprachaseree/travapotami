@@ -3,10 +3,10 @@
 <div class="content-section">
     <div class="container">
         <h2>Register</h2>
-        <form method="POST" action="">
-            {{ form.csrf_token }}
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
             {% for field in form %}
-                {% if field.type != "SubmitField" %}
+                {% if field.type != "SubmitField" and field.type != "FileField" and field.widget.input_type != 'hidden' %}
                     <div class="input-field">
                         {{ field }}
                         <label>{{ field.label }}</label>
@@ -14,11 +14,17 @@
                     <br>
                 {% endif %}
             {% endfor %}
+            <div class="form-group">
+                <label>{{ form.photo.label }}</label>
+                {{ form.photo(class="form-control-file") }}
+            </div>
+            <br>
             <div class="btn waves-effect waves-light">
                 {{ form.submit() }}
                 <i class="material-icons right">send</i>
             </div>
         </form>
+        <br>
     </div>
 </div>
 

@@ -4,6 +4,7 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask import current_app, g
 from flask.cli import with_appcontext
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
 class TripForm(FlaskForm):
@@ -266,6 +267,10 @@ class RegistrationForm(FlaskForm):
                                      
        passport_number = StringField('Passport number', validators=[DataRequired()])
        birthday = DateField('Date of Birth', format='%Y-%m-%d')
+       photo = FileField('Profile Photo', validators=[
+              FileRequired(),
+              FileAllowed(['jpg', 'png'], 'Images only!')
+       ])
        submit = SubmitField('Register')
 
 
@@ -294,7 +299,6 @@ class UpdateAccountInfo(FlaskForm):
        confirm_password = PasswordField('Confirm Password',
                                         validators=[DataRequired(), EqualTo('password')])
        submit = SubmitField('Update')
-       cancel = SubmitField('Cancel')
 
 
 class ForgotPasswordForm(FlaskForm):
@@ -305,3 +309,10 @@ class ForgotPasswordForm(FlaskForm):
 class SearchUsersForm(FlaskForm):
        username = StringField('Search User by username', validators=[DataRequired()])
        submit = SubmitField('Search')
+
+class UpdateImage(FlaskForm):
+       photo = FileField('New Profile Photo', validators=[
+           FileRequired(),
+           FileAllowed(['jpg', 'png'], 'Images only!')
+       ])
+       submit = SubmitField('Upload')

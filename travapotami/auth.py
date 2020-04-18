@@ -1,4 +1,5 @@
-from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm
+from base64 import b64encode
+from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -12,6 +13,9 @@ def register():
         return redirect(url_for('main_blueprint.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        f = form.photo.data
+        f.seek(0)
+        data = f.read()
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username        = form.username.data,
                     email           = form.username.data,
@@ -20,8 +24,11 @@ def register():
                     last_name       = form.last_name.data,
                     gender          = form.gender.data,
                     passport_number = form.passport_number.data,
-                    birthday        = form.birthday.data
+                    birthday        = form.birthday.data,
+                    photo           = data
         )
+        flash(data)
+        #return render_template('./auth/register.html', title='Register', form=form)
         db.session.add(user)
         db.session.commit()
         flash("Successfully registered. Redirected to login.")
@@ -91,15 +98,34 @@ def edit_account():
         form.birthday.data = current_user.birthday
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
 
+
+@auth_blueprint.route('/update_photo', methods=['GET', 'POST'])
+@login_required
+def update_photo():
+    form = UpdateImage()
+    image = b64encode(current_user.photo).decode("utf-8")
+    if form.validate_on_submit():
+        f = form.photo.data
+        f.seek(0)
+        data = f.read()
+        current_user.photo = data
+        db.session.commit()
+        flash("Picture updated.")
+        image = b64encode(current_user.photo).decode("utf-8")
+        return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=current_user.username, is_current=True, image=image))
+    return render_template('./auth/update_photo.html', title="Update Photo",  form=form, image=image)
+
 # display user
 @auth_blueprint.route('/user/<string:username>', methods=['GET'])
-@login_required
 def display_account(username):
     user = User.query.filter_by(username=username).first()
     is_current = False
     if current_user == user:
         is_current = True
-    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current)
+    image = None
+    if user.photo:
+        image = b64encode(user.photo).decode("utf-8")
+    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image)
 
 
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])

@@ -9,8 +9,8 @@ def get_db():
     return g.db
 
 def init_db():
-    from .models import User
-    db = get_db()
+    from .models import db, User, Rating, Group, Trip
+    #db = get_db()
     db.create_all()
 
 @click.command('init-db')
