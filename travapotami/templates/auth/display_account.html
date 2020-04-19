@@ -12,48 +12,53 @@
         {% endif %}
         <table class="responsive-table">
             <tr>
-                <th>
-                    First name
-                </th>
-                <td>
-                    {{ user.first_name }}
-                </td>
+                <th>First name</th>
+                <td>{{ user.first_name }}</td>
             </tr>
             <tr>
-                <th>
-                    Last name
-                </th>
-                <td>
-                    {{ user.last_name }}
-                </td>
+                <th>Last name</th>
+                <td>{{ user.last_name }}</td>
             </tr>
             <tr>
-                <th>
-                    Email
-                </th>
-                <td>
-                    {{ user.email }}
-                </td>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>
-                    Gender
-                </th>
-                <td>
-                    {{ user.gender }}
-                </td>
+                <th>Gender</th>
+                <td>{{ user.gender }}</td>
             </tr>
             <tr>
-                <th>
-                    Birthday
-                </th>
-                <td>
-                    {{ user.birthday }}
-                </td>
+                <th>Birthday</th>
+                <td>{{ user.birthday }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ user.age }}</td>
             </tr>
         </table>
-        {% if is_current %}
         <br>
+        <h2>User Ratings</h2>
+        <table class="responsive-table">
+            <tr>
+                <th>Friendliness</th>
+                <td>{{ user.rating.friendliness }}</td>
+            </tr>
+            <tr>
+                <th>Cleanliness</th>
+                <td>{{ user.rating.cleanliness }}</td>
+            </tr>
+            <tr>
+                <th>Timeliness</th>
+                <td>{{ user.rating.timeliness }}</td>
+            </tr>
+            <tr>
+                <th>Foodies</th>
+                <td>{{ user.rating.foodies }}</td>
+            </tr>
+        </table>
+        <br>
+        {% if is_current %}
+        
         <div class="container">
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="{{  url_for('auth_blueprint.edit_account')  }}">Edit Account</a>
@@ -66,7 +71,6 @@
         </div>
         <br>
         {% elif current_user.isauthenticated %}
-        <br>
         <div class="container">
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="#">Add as friend</a>

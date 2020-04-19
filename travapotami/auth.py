@@ -13,26 +13,41 @@ def register():
         return redirect(url_for('main_blueprint.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        f = form.photo.data
-        f.seek(0)
-        data = f.read()
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username        = form.username.data,
-                    email           = form.username.data,
-                    password        = hashed_password,
-                    first_name      = form.first_name.data,
-                    last_name       = form.last_name.data,
-                    gender          = form.gender.data,
-                    passport_number = form.passport_number.data,
-                    birthday        = form.birthday.data,
-                    photo           = data
-        )
-        flash(data)
-        #return render_template('./auth/register.html', title='Register', form=form)
-        db.session.add(user)
-        db.session.commit()
-        flash("Successfully registered. Redirected to login.")
-        return redirect(url_for('auth_blueprint.login'))
+        # username, email, and passport has to be unique
+        has_username = User.query.filter_by(username=form.username.data).first()
+        has_email = User.query.filter_by(email=form.email.data).first()
+        has_passport = User.query.filter_by(passport_number=form.passport_number.data).first()
+        if has_username or has_email or has_passport:
+            if has_username:
+                flash("Invalid username. Account with this username already exists!")
+                form.username.data = None
+            if has_email:
+                flash("Invalid email. Account with this email already exists.")
+                form.email.data = None
+            if has_passport:
+                flash("Invalid passport number. Account with this passport number already exists.")
+                form.passport_number.data = None
+        else:
+            f = form.photo.data
+            f.seek(0)
+            data = f.read()
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user = User(username        = form.username.data,
+                        email           = form.email.data,
+                        password        = hashed_password,
+                        first_name      = form.first_name.data,
+                        last_name       = form.last_name.data,
+                        gender          = form.gender.data,
+                        passport_number = form.passport_number.data,
+                        birthday        = form.birthday.data,
+                        photo           = data
+            )
+            flash(data)
+            #return render_template('./auth/register.html', title='Register', form=form)
+            db.session.add(user)
+            db.session.commit()
+            flash("Successfully registered. Redirected to login.")
+            return redirect(url_for('auth_blueprint.login'))
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
