@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <h1>Rate {{ username }}</h1>
+        <form action="" method="POST">
+            {{ form.csrf_token() }}
+            {% for field in form %}
+                {% if field.type != "SubmitField" and field.widget.input_type != 'hidden' %}
+                <div class="input-field">
+                    {{ field }}
+                    <label>{{ field.label }}</label>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="btn waves-effect waves-light">
+                {{ form.submit() }}
+                <i class="material-icons right">rate_review</i>
+            </div>
+            <div class="btn waves-effect waves-light">
+                <a style="color: black"
+                    href="{{  url_for('auth_blueprint.display_account', username=username)  }}">Cancel
+                    <i style="color: white" class="material-icons right">cancel</i>
+                </a>
+            </div>
+        </form>
+        <br>
+    </div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>
+{% endblock content %}

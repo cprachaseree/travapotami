@@ -70,8 +70,11 @@
             </div>
         </div>
         <br>
-        {% elif current_user.isauthenticated %}
+        {% elif current_user.is_authenticated %}
         <div class="container">
+            <div class="btn waves-effect waves-light">
+                <a style="color:white" href="{{  url_for('auth_blueprint.rate_user', username=user.username)  }}">Rate this User</a>
+            </div>
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="#">Add as friend</a>
             </div>

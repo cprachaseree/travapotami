@@ -316,3 +316,26 @@ class UpdateImage(FlaskForm):
            FileAllowed(['jpg', 'png'], 'Images only!')
        ])
        submit = SubmitField('Upload')
+
+class GiveRatings(FlaskForm):
+       friendliness = SelectField('Friendliness', choices=[(1, 1.0),
+                                                           (2, 2.0),
+                                                           (3, 3.0),
+                                                           (4, 4.0),
+                                                           (5, 5.0)])
+       cleanliness = SelectField('Cleanliness', choices=[(1, 1.0),
+                                                          (2, 2.0),
+                                                          (3, 3.0),
+                                                          (4, 4.0),
+                                                          (5, 5.0)])
+       timeliness = SelectField('Timeliness', choices=[(1, 1.0),
+                                                         (2, 2.0),
+                                                         (3, 3.0),
+                                                         (4, 4.0),
+                                                         (5, 5.0)])
+       foodies = SelectField('Foodies', choices=[(1, 1.0),
+                                                      (2, 2.0),
+                                                      (3, 3.0),
+                                                      (4, 4.0),
+                                                      (5, 5.0)])
+       submit = SubmitField('Rate')

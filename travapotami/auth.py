@@ -1,5 +1,5 @@
 from base64 import b64encode
-from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage
+from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -42,7 +42,6 @@ def register():
                         birthday        = form.birthday.data,
                         photo           = data
             )
-            flash(data)
             #return render_template('./auth/register.html', title='Register', form=form)
             db.session.add(user)
             db.session.commit()
@@ -154,3 +153,42 @@ def search_users():
         else:
             flash("Username does not exist!")
     return render_template('./auth/search_users.html', title="Search Users", form=form)
+
+
+@auth_blueprint.route('/rate_user/<string:username>', methods=['GET', 'POST'])
+@login_required
+def rate_user(username):
+    form = GiveRatings()
+    if request.method == 'POST':
+        is_current = False
+        user = User.query.filter_by(username=username).first()
+        if user == None:
+            flash("Username does not exist!")
+            return redirect(url_for('main_blueprint.home'))
+        if user == current_user:
+            flash("Cannot rate yourself.")
+            is_current = True
+        
+        number_of_votes = float(user.rating.number_of_votes)
+        friendliness = float(user.rating.friendliness)
+        cleanliness = float(user.rating.cleanliness)
+        timeliness = float(user.rating.timeliness)
+        foodies = float(user.rating.foodies)
+        friendliness = (friendliness * number_of_votes + float(form.friendliness.data)) / (number_of_votes + 1)
+        cleanliness = (cleanliness * number_of_votes + float(form.cleanliness.data)) / (number_of_votes + 1)
+        timeliness = (timeliness * number_of_votes + float(form.timeliness.data)) / (number_of_votes + 1)
+        foodies = (foodies * number_of_votes + float(form.foodies.data)) / (number_of_votes + 1)
+        
+        user.rating.friendliness = friendliness
+        user.rating.cleanliness = cleanliness
+        user.rating.timeliness = timeliness
+        user.rating.foodies = foodies
+        user.rating.number_of_votes = number_of_votes + 1
+        db.session.commit()
+        
+        flash(f"Ratings given to {username}")
+        image = user.photo
+        
+        return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=username, is_current=is_current, image=image))
+    
+    return render_template('./auth/update_ratings.html', title="Rate User", form=form, username=username)

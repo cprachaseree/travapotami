@@ -70,6 +70,7 @@ class Rating(db.Model):
     cleanliness = db.Column(db.Float, nullable=False)
     timeliness = db.Column(db.Float, nullable=False)
     foodies = db.Column(db.Float, nullable=False)
+    number_of_votes = db.Column(db.Integer, nullable=False)
     # more metric to be implemented
 
     def __init__(self, **kwargs):
@@ -79,6 +80,7 @@ class Rating(db.Model):
         self.cleanliness = 0
         self.timeliness = 0
         self.foodies = 0
+        self.number_of_votes = 0
 
 class Group(db.Model):
 
