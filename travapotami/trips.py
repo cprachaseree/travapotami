@@ -14,19 +14,21 @@ def choose_trip():
 @trips_blueprint.route('/create_trip', methods=['GET', 'POST'])
 def create_trip():
     form = TripForm()
-    start_month = str(form.datebegin.data)[5:7]
-    start_day = str(form.datebegin.data)[8:]
-    start_year = str(form.datebegin.data)[:4]
-    end_month = str(form.dateend.data)[5:7]
-    end_day = str(form.dateend.data)[8:]
-    end_year = str(form.dateend.data)[:4]
-    d0 = date(int(start_year), int(start_month), int(start_day))
-    d1 = date(int(end_year), int(end_month), int(end_day))
-    delta = d1 - d0
+
   #  print(delta.days)
 
     if request.method == 'POST':
-        trip = Trip(destination=form.destination.data,
+        start_month = str(form.datebegin.data)[5:7]
+        start_day = str(form.datebegin.data)[8:]
+        start_year = str(form.datebegin.data)[:4]
+        end_month = str(form.dateend.data)[5:7]
+        end_day = str(form.dateend.data)[8:]
+        end_year = str(form.dateend.data)[:4]
+        d0 = date(int(start_year), int(start_month), int(start_day))
+        d1 = date(int(end_year), int(end_month), int(end_day))
+        delta = d1 - d0
+        trip = Trip(hosts=[current_user],
+                    destination=form.destination.data,
                     budget_min=form.min_budget.data,
                     budget_max=form.max_budget.data,
                     date_from=form.datebegin.data,
@@ -43,6 +45,11 @@ def create_trip():
         return render_template('./trips/trip.html', title='Created', result=result)
     return render_template('./trips/create_trip.html', title='Create Trip', form=form)
 
+
+@trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
+def my_trips():
+
+    return render_template('./trips/my_trips.html', title='Trips', result=result)
 
 # def edit_trip():
 #     return render_template('./trips/edit_trip.html', title='Edit Trip')
