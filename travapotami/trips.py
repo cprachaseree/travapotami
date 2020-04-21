@@ -11,9 +11,11 @@ trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofbl
 def choose_trip():
     return render_template('./trips/choose_trip.html', title='Choose Trip')
 
+
 @trips_blueprint.route('/create_trip', methods=['GET', 'POST'])
 def create_trip():
     if not current_user.is_authenticated:
+        flash("Login first please!")
         return redirect(url_for('auth_blueprint.login'))
 
     form = TripForm()
@@ -71,7 +73,8 @@ def my_trips():
             trips.append(new)
         return render_template('./trips/my_trips.html', title='Trips', result=trips)
     else:
-        return render_template('./auth/login.html', title='Login')
+        flash("Login first please!")
+        return redirect(url_for('auth_blueprint.login'))
 
 
 @trips_blueprint.route('/trip/<int:tripid>', methods=['GET', 'POST'])
@@ -103,11 +106,11 @@ def join_trips():
 # def edit_trip():
 #     return render_template('./trips/edit_trip.html', title='Edit Trip')
 
+
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
     form = SearchTripsForm()
     if form.validate_on_submit():
         db.session
-    
+
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
-        
