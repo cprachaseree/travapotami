@@ -12,6 +12,7 @@ setup(
         'mysqlclient',
         'flask_bcrypt',
         'flask_login',
-        'flask-admin'
+        'flask-admin',
+        'flask_wtf'
     ],
 )

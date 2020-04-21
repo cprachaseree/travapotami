@@ -33,6 +33,7 @@ def create_trip():
                     budget_max=form.max_budget.data,
                     date_from=form.datebegin.data,
                     date_to=form.dateend.data,
+                    description=form.description.data,
                     # date_from=datetime.combine(form.datebegin.data, time()),
                     # date_to=datetime.combine(form.dateend.data, time()),
                     length=timedelta(days=delta.days),

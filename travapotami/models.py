@@ -112,6 +112,7 @@ class Trip(db.Model):
     length = db.Column(db.Interval, nullable=False)
     trip_type = db.Column(db.String(64))  # to be changed
     finished = db.Column(db.Boolean, nullable=False)
+    description = db.Column(db.Text, nullable=False)
 
     def __init__(self, **kwargs):
         super(Trip, self).__init__(**kwargs)

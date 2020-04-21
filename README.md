@@ -1,14 +1,8 @@
 # travapotami
 
-## Dependencies
-
-* flask
-* flask-sqlalchemy
-* mysqlclient
-
 ## Start a Development Server
 
-All the dependencies should be install. 
+All the dependencies should be install, refer to setup.py. 
 
 MySQL database server must be running. The username, password, and database name can be set in __init__.py under 'SQLALCHEMY_DATABASE_URI'
 
