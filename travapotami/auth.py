@@ -7,6 +7,8 @@ from . import bcrypt, login_manager
 from .models import db, User
 
 # Registration page
+
+
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -43,7 +45,6 @@ def register():
                         photo           = data,
                         is_web_admin    = False
             )
-            #return render_template('./auth/register.html', title='Register', form=form)
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
@@ -54,6 +55,8 @@ def register():
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
+
+
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -73,6 +76,8 @@ def login():
     return render_template('./auth/login.html', title='Login', form=form)
 
 # Logout
+
+
 @auth_blueprint.route('/logout')
 @login_required
 def logout():
@@ -81,7 +86,9 @@ def logout():
     return redirect(url_for('main_blueprint.home'))
 
 # Forget Password
-@auth_blueprint.route('/forgetpassword',  methods=['GET', 'POST'])
+
+
+@auth_blueprint.route('/forgetpassword', methods=['GET', 'POST'])
 def forgetpassword():
     form = ForgotPasswordForm()
     if form.validate_on_submit():
@@ -109,6 +116,8 @@ def new_password(username):
     return render_template('./auth/new_password.html', title='New Password', form=form)
 
 # Edit usr information
+
+
 @auth_blueprint.route('/edit_account', methods=['GET', 'POST'])
 @login_required
 def edit_account():
@@ -137,10 +146,14 @@ def edit_account():
         form.gender.data = current_user.gender
         form.passport_number.data = current_user.passport_number
         form.birthday.data = current_user.birthday
+<<<<<<< HEAD
     if form.errors:
         for i, e in form.errors.items():
             flash(e[0])
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
+=======
+    return render_template('./auth/edit_account.html', title="Update Account", form=form)
+>>>>>>> 10abbb05c2413d036bbc2d485ad0861df2121a1c
 
 
 @auth_blueprint.route('/update_photo', methods=['GET', 'POST'])
@@ -157,9 +170,11 @@ def update_photo():
         flash("Picture updated.")
         image = b64encode(current_user.photo).decode("utf-8")
         return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=current_user.username, is_current=True, image=image))
-    return render_template('./auth/update_photo.html', title="Update Photo",  form=form, image=image)
+    return render_template('./auth/update_photo.html', title="Update Photo", form=form, image=image)
 
 # display user
+
+
 @auth_blueprint.route('/user/<string:username>', methods=['GET'])
 def display_account(username):
     user = User.query.filter_by(username=username).first()
@@ -198,7 +213,7 @@ def rate_user(username):
         if user == current_user:
             flash("Cannot rate yourself.")
             is_current = True
-        
+
         number_of_votes = float(user.rating.number_of_votes)
         friendliness = float(user.rating.friendliness)
         cleanliness = float(user.rating.cleanliness)
@@ -208,17 +223,17 @@ def rate_user(username):
         cleanliness = (cleanliness * number_of_votes + float(form.cleanliness.data)) / (number_of_votes + 1)
         timeliness = (timeliness * number_of_votes + float(form.timeliness.data)) / (number_of_votes + 1)
         foodies = (foodies * number_of_votes + float(form.foodies.data)) / (number_of_votes + 1)
-        
+
         user.rating.friendliness = friendliness
         user.rating.cleanliness = cleanliness
         user.rating.timeliness = timeliness
         user.rating.foodies = foodies
         user.rating.number_of_votes = number_of_votes + 1
         db.session.commit()
-        
+
         flash(f"Ratings given to {username}")
         image = user.photo
-        
+
         return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=username, is_current=is_current, image=image))
-    
+
     return render_template('./auth/update_ratings.html', title="Rate User", form=form, username=username)
