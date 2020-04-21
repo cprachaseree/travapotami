@@ -11,6 +11,8 @@ setup(
         'flask-sqlalchemy',
         'mysqlclient',
         'flask_bcrypt',
-        'flask_login'
+        'flask_login',
+        'flask-admin',
+        'flask_wtf'
     ],
 )

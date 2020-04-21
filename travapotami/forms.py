@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField
+from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField, TextAreaField, SelectMultipleField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flask import current_app, g
 from flask.cli import with_appcontext
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
-countries = [('AF', 'AFGHANISTAN'),
+countires = [('AF', 'AFGHANISTAN'),
              ('AL', 'ALBANIA'),
              ('DZ', 'ALGERIA'),
              ('AS', 'AMERICAN SAMOA'),
@@ -239,17 +239,22 @@ countries = [('AF', 'AFGHANISTAN'),
              ('YE', 'YEMEN'),
              ('ZW', 'ZIMBABWE')]
 
+trip_type = [('RELX', 'Relaxing'),
+             ('ADVT', 'Adventurous'),
+             ('FOOD', 'Foodies'),
+             ('FAST', 'Fast-paced'),
+             ('SLOW', 'Slow-life')]
+
 
 class TripForm(FlaskForm):
 
-    tripname = StringField('Trip Name',
-                           validators=[DataRequired(), Length(min=2, max=40)])
-    destination = SelectField('Destination', choices=countries)
+    tripname = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=40)])
+    destination = SelectField('Destination', choices=countires)
+    description = TextAreaField('Description', validators=[DataRequired()])
     datebegin = DateField('Begin Date', format='%Y-%m-%d')
     dateend = DateField('End Date', format='%Y-%m-%d')
-    min_budget = DecimalField('Minimum Budget', validators=[DataRequired(), NumberRange(min=0.0)])
-    max_budget = DecimalField('Maximum Budget', validators=[DataRequired(), NumberRange(min=0.0)])
-    triptype = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=60)])
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
@@ -308,8 +313,15 @@ class UpdateAccountInfo(FlaskForm):
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    passport_no = StringField('Passport number', validators=[DataRequired()])
-    submit = SubmitField('Confirm')
+    passport_number = StringField('Passport number', validators=[DataRequired()])
+    submit = SubmitField('Request Change Password')
+
+
+class NewPassword(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Confirm New Password')
 
 
 class SearchUsersForm(FlaskForm):
@@ -347,3 +359,11 @@ class GiveRatings(FlaskForm):
                                               (4, 4.0),
                                               (5, 5.0)])
     submit = SubmitField('Rate')
+
+
+class SearchTripsForm(FlaskForm):
+
+    destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
+    max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
+    submit = SubmitField('Search')

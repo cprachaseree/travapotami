@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <th>Gender</th>
-                <td>{{ user.gender }}</td>
+                <td>{{ gender }}</td>
             </tr>
             <tr>
                 <th>Birthday</th>
@@ -74,9 +74,6 @@
         <div class="container">
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="{{  url_for('auth_blueprint.rate_user', username=user.username)  }}">Rate this User</a>
-            </div>
-            <div class="btn waves-effect waves-light">
-                <a style="color:white" href="#">Add as friend</a>
             </div>
         </div>
         <br>

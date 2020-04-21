@@ -55,6 +55,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(64), nullable=False)
     photo = db.Column(db.LargeBinary(length=2**32 - 1))
     passport_number = db.Column(db.String(16), nullable=False)
+    is_web_admin = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -111,6 +112,7 @@ class Trip(db.Model):
     length = db.Column(db.Interval, nullable=False)
     trip_type = db.Column(db.String(64))  # to be changed
     finished = db.Column(db.Boolean, nullable=False)
+    description = db.Column(db.Text, nullable=False)
 
     def __init__(self, **kwargs):
         super(Trip, self).__init__(**kwargs)

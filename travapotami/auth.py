@@ -1,5 +1,5 @@
 from base64 import b64encode
-from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings
+from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings, NewPassword
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -34,21 +34,24 @@ def register():
             f.seek(0)
             data = f.read()
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user = User(username=form.username.data,
-                        email=form.email.data,
-                        password=hashed_password,
-                        first_name=form.first_name.data,
-                        last_name=form.last_name.data,
-                        gender=form.gender.data,
-                        passport_number=form.passport_number.data,
-                        birthday=form.birthday.data,
-                        photo=data
-                        )
-            # return render_template('./auth/register.html', title='Register', form=form)
+            user = User(username        = form.username.data,
+                        email           = form.email.data,
+                        password        = hashed_password,
+                        first_name      = form.first_name.data,
+                        last_name       = form.last_name.data,
+                        gender          = form.gender.data,
+                        passport_number = form.passport_number.data,
+                        birthday        = form.birthday.data,
+                        photo           = data,
+                        is_web_admin    = False
+            )
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
             return redirect(url_for('auth_blueprint.login'))
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
@@ -67,6 +70,9 @@ def login():
             return redirect(url_for('main_blueprint.home'))
         else:
             flash("Incorrect username or password. Please try again.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
     return render_template('./auth/login.html', title='Login', form=form)
 
 # Logout
@@ -85,9 +91,29 @@ def logout():
 @auth_blueprint.route('/forgetpassword', methods=['GET', 'POST'])
 def forgetpassword():
     form = ForgotPasswordForm()
-    if request.method == 'POST':
-        flash("SUCCESS")
-    return render_template('./auth/forgetpassword.html', title='Forget Password', form=form)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data, passport_number=form.passport_number.data).first()
+        if user:
+            flash("Redirected to change password form.")
+            return redirect(url_for('auth_blueprint.new_password', username=user.username))
+        else:
+            flash("No user exists with given email and passport number.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
+    return render_template('./auth/forgot_password.html', title='Forget Password', form=form)
+
+
+@auth_blueprint.route('/new_password/<string:username>',  methods=['GET', 'POST'])
+def new_password(username):
+    form = NewPassword()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        flash("Password resetted! Redirected to login.")
+        return redirect(url_for('auth_blueprint.login'))
+    return render_template('./auth/new_password.html', title='New Password', form=form)
 
 # Edit usr information
 
@@ -120,7 +146,10 @@ def edit_account():
         form.gender.data = current_user.gender
         form.passport_number.data = current_user.passport_number
         form.birthday.data = current_user.birthday
-    return render_template('./auth/edit_account.html', title="Update Account", form=form)
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
+    return render_template('./auth/edit_account.html', title="Update Account",  form=form)
 
 
 @auth_blueprint.route('/update_photo', methods=['GET', 'POST'])
@@ -151,8 +180,8 @@ def display_account(username):
     image = None
     if user.photo:
         image = b64encode(user.photo).decode("utf-8")
-    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image)
-
+    gender = str(user.gender)
+    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image, gender=gender)
 
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])
 def search_users():
