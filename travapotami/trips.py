@@ -3,6 +3,7 @@ from flask_login import current_user
 from .forms import TripForm
 from datetime import date, datetime, timedelta
 from .models import db, Trip
+import pycountry
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
 
 
@@ -48,8 +49,57 @@ def create_trip():
 
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
 def my_trips():
+    if current_user.is_authenticated:
+        alltrips = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+        trips = []
+        for i in alltrips:
+            new = {}
+            new['tripid'] = i.id
+            if i.hosts:
+                hosts = []
+                for x in i.hosts:
+                    hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
+                new['hosts'] = hosts
+            country = pycountry.countries.get(alpha_2=i.destination)  # append as country.name
+            new['destination'] = country.name
+            if i.participants:
+                new['participants'] = i.participants
+            new['budget_max'] = i.budget_max
+            new['date_from'] = i.date_from
+            new['date_to'] = i.date_to
+            new['length'] = i.length  # in days
+            new['trip_type'] = i.trip_type
+            trips.append(new)
+        return render_template('./trips/my_trips.html', title='Trips', result=trips)
+    else:
+        return render_template('./auth/login.html', title='Login')
 
-    return render_template('./trips/my_trips.html', title='Trips', result=result)
+
+@trips_blueprint.route('/trip/<int:tripid>', methods=['GET', 'POST'])
+def display_trip(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    new = {}
+    new['tripid'] = trip.id
+    if trip.hosts:
+        hosts = []
+        for x in trip.hosts:
+            hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
+        new['hosts'] = hosts
+    country = pycountry.countries.get(alpha_2=trip.destination)  # append as country.name
+    new['destination'] = country.name
+    if trip.participants:
+        new['participants'] = trip.participants
+    new['budget_max'] = trip.budget_max
+    new['date_from'] = trip.date_from
+    new['date_to'] = trip.date_to
+    new['length'] = trip.length  # in days
+    new['trip_type'] = trip.trip_type
+    return render_template('./trips/display_trip.html', title="Your trip", result=new)
+
+
+@trips_blueprint.route('/join_trip', methods=['GET', 'POST'])
+def join_trips():
+    return render_template('./trips/choose_trip.html', title='Choose Trip')
 
 # def edit_trip():
 #     return render_template('./trips/edit_trip.html', title='Edit Trip')
