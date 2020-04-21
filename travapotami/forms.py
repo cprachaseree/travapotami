@@ -252,8 +252,8 @@ class TripForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()])
     datebegin = DateField('Begin Date', format='%Y-%m-%d')
     dateend = DateField('End Date', format='%Y-%m-%d')
-    max_budget = DecimalField('Maximum Budget', validators=[DataRequired(), NumberRange(min=0.0)])
-    triptype = SelectMultipleField('Trip Name', choices=trip_type, validators=[DataRequired()])
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
@@ -357,8 +357,10 @@ class GiveRatings(FlaskForm):
                                               (5, 5.0)])
     submit = SubmitField('Rate')
 
-class SearchTrips(FlaskForm):
+class SearchTripsForm(FlaskForm):
 
     destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
-    budget = SelectField('Destination', choices=countires, validators=[DataRequired()])
+    max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
+    submit = SubmitField('Search')
 
