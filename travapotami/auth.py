@@ -146,14 +146,10 @@ def edit_account():
         form.gender.data = current_user.gender
         form.passport_number.data = current_user.passport_number
         form.birthday.data = current_user.birthday
-<<<<<<< HEAD
     if form.errors:
         for i, e in form.errors.items():
             flash(e[0])
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
-=======
-    return render_template('./auth/edit_account.html', title="Update Account", form=form)
->>>>>>> 10abbb05c2413d036bbc2d485ad0861df2121a1c
 
 
 @auth_blueprint.route('/update_photo', methods=['GET', 'POST'])

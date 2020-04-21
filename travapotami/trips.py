@@ -29,7 +29,6 @@ def create_trip():
         delta = d1 - d0
         trip = Trip(hosts=[current_user],
                     destination=form.destination.data,
-                    budget_min=form.min_budget.data,
                     budget_max=form.max_budget.data,
                     date_from=form.datebegin.data,
                     date_to=form.dateend.data,

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField, TextAreaField
+from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField, TextAreaField, SelectMultipleField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flask import current_app, g
@@ -239,17 +239,21 @@ countires = [('AF', 'AFGHANISTAN'),
             ('YE', 'YEMEN'),
             ('ZW', 'ZIMBABWE')]
 
+trip_type = [('RELX', 'Relaxing'),
+            ('ADVT', 'Adventurous'),
+            ('FOOD', 'Foodies'),
+            ('FAST', 'Fast-paced'),
+            ('SLOW', 'Slow-life')]
+
 class TripForm(FlaskForm):
 
-    tripname = StringField('Trip Name',
-                           validators=[DataRequired(), Length(min=2, max=40)])
+    tripname = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=40)])
     destination = SelectField('Destination', choices=countires)
     description = TextAreaField('Description', validators=[DataRequired()])
     datebegin = DateField('Begin Date', format='%Y-%m-%d')
     dateend = DateField('End Date', format='%Y-%m-%d')
-    min_budget = DecimalField('Minimum Budget', validators=[DataRequired(), NumberRange(min=0.0)])
     max_budget = DecimalField('Maximum Budget', validators=[DataRequired(), NumberRange(min=0.0)])
-    triptype = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=60)])
+    triptype = SelectMultipleField('Trip Name', choices=trip_type, validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
@@ -354,4 +358,7 @@ class GiveRatings(FlaskForm):
     submit = SubmitField('Rate')
 
 class SearchTrips(FlaskForm):
-    pass
+
+    destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
+    budget = SelectField('Destination', choices=countires, validators=[DataRequired()])
+
