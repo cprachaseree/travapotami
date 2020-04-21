@@ -303,8 +303,14 @@ class UpdateAccountInfo(FlaskForm):
 
 class ForgotPasswordForm(FlaskForm):
        email = StringField('Email', validators=[DataRequired(), Email()])
-       passport_no = StringField('Passport number', validators=[DataRequired()])
-       submit = SubmitField('Confirm')
+       passport_number = StringField('Passport number', validators=[DataRequired()])
+       submit = SubmitField('Request Change Password')
+
+class NewPassword(FlaskForm):
+       password = PasswordField('Password', validators=[DataRequired()])
+       confirm_password = PasswordField('Confirm Password',
+                                        validators=[DataRequired(), EqualTo('password')])  
+       submit = SubmitField('Confirm New Password')
 
 class SearchUsersForm(FlaskForm):
        username = StringField('Search User by username', validators=[DataRequired()])

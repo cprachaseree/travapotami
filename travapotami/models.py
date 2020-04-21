@@ -52,6 +52,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(64), nullable=False)
     photo = db.Column(db.LargeBinary(length=2**32-1))
     passport_number = db.Column(db.String(16), nullable=False)
+    is_web_admin = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
