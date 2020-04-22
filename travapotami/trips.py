@@ -105,7 +105,7 @@ def participant_approve(tripid, userid):
     trip.pending_participants.remove(user)
     trip.participants.append(user)
     db.session.commit()
-    flash(user.name + 'is added to participants!')
+    flash(user.username + 'is added to participants!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])

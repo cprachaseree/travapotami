@@ -37,7 +37,7 @@
         <tr>
             <th>
                 Hosts 
-                {%if user is in trip.hosts%}
+                {%if user in trip.hosts%}
                 <a class="btn-small" href="{{ url_for('trips_blueprint.add_host', tripid=trip.id) }}">Add</a>
                 {%endif%}
             </th>
@@ -50,7 +50,7 @@
                                 {{x.first_name + " " + x.last_name}}
                             </a>
                         </td>
-                        {%if user is in trip.hosts and num_of_hosts > 1%}
+                        {%if user in trip.hosts and num_of_hosts > 1%}
                             <td>
                                 <a class="btn-small" href="{{ url_for('trips_blueprint.remove_host', tripid=trip.id, userid=x.id) }}">Remove</a>
                             </td>
@@ -65,7 +65,7 @@
             <tr>
                 <th>
                     Participants 
-                    {%if user is in trip.hosts%}
+                    {%if user in trip.hosts%}
                     <a class="btn-small" href="{{ url_for('trips_blueprint.add_participant', tripid=trip.id) }}">Add</a>
                     {%endif%}
                 </th>
@@ -79,7 +79,7 @@
                                 {{x.first_name + " " + x.last_name}}
                             </a>
                         </td>
-                        {%if user is in trip.hosts%}
+                        {%if user in trip.hosts%}
                             <td>
                                 <a class="btn-small" href="{{ url_for('trips_blueprint.remove_participant', tripid=trip.id, userid=x.id) }}">Remove</a>
                             </td>
@@ -94,12 +94,12 @@
         <tr>
     </table>
     <br>
-    {%if user is in trip.hosts%}
+    {%if user in trip.hosts%}
 
         <a href="{{url_for('trips_blueprint.edit_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
         <a href="{{url_for('trips_blueprint.requests_manager',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Approve/Reject Requests</a>
     {%endif%}
-    {%if user is not in trip.hosts and user is  not in trip.participants%}
+    {%if user not in trip.hosts and user not in trip.participants%}
         <a href="{{url_for('trips_blueprint.join_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Request to Join</a>
         
     {%endif%}
