@@ -38,7 +38,6 @@ class Gender(Enum):
 
 
 class User(db.Model, UserMixin):
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(64), nullable=False)
@@ -56,7 +55,6 @@ class User(db.Model, UserMixin):
     photo = db.Column(db.LargeBinary(length=2**32 - 1))
     passport_number = db.Column(db.String(16), nullable=False)
     is_web_admin = db.Column(db.Boolean, nullable=False)
-
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         # initialize associated rating
@@ -97,7 +95,7 @@ class Group(db.Model):
     admins = db.relationship('User', secondary=group_admin)
     mates = db.relationship('User', secondary=group_mate)
     trips = db.relationship('Trip', backref='group')  # ongoing and past trip will be distinguished by Trip.finished instead
-
+    description = db.Column(db.Text, nullable=False)
 
 class Trip(db.Model):
 

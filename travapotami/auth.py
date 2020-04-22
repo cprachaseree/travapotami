@@ -8,7 +8,6 @@ from .models import db, User
 
 # Registration page
 
-
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -45,6 +44,7 @@ def register():
                         photo           = data,
                         is_web_admin    = False
             )
+
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")

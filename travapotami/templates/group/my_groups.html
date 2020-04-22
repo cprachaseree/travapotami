@@ -11,7 +11,7 @@
             <li class="collection-item avatar">
             <i class="material-icons circle teal">face</i>
             <span class="title">{{ result[i].group_name }}</span>
-            <p>Group Description<br>
+            <p>{{ result[i].description }}<br>
                 Number of Members: {{ result[i].mates|length+1 }} 
             </p>
             <a href="{{  url_for('group_blueprint.group_info', group=result[i])  }}" class="secondary-content"><i class="material-icons">info_outline</i></a>
