@@ -15,6 +15,7 @@ def create_group():
     if request.method == 'POST':
         group_name = request.form['groupname']
         public = request.form.get('accessibility')
+        description = request.form['group-description']
         if public:
             public = True
             flash("Public Group")
@@ -24,13 +25,14 @@ def create_group():
         usernames = []
         # get usernames from the form
         for x in request.form:
-            if x == "groupname" or not request.form[x] or request.form[x] == 'on':
+            if x == "groupname" or x == "group-description" or not request.form[x] or request.form[x] == 'on':
                 continue
             usernames.append(request.form[x])
         #flash(usernames)
 
         group = Group( group_name = group_name,
-                        public = public
+                        public = public, 
+                        description = description
         )
         db.session.add(group)
         db.session.commit()
