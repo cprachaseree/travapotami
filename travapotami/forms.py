@@ -239,11 +239,11 @@ countires = [('AF', 'AFGHANISTAN'),
              ('YE', 'YEMEN'),
              ('ZW', 'ZIMBABWE')]
 
-trip_type = [('RELX', 'Relaxing'),
-             ('ADVT', 'Adventurous'),
-             ('FOOD', 'Foodies'),
-             ('FAST', 'Fast-paced'),
-             ('SLOW', 'Slow-life')]
+trip_type = [('Relaxing', 'Relaxing'),
+             ('Adventurous', 'Adventurous'),
+             ('Foodies', 'Foodies'),
+             ('Fast-paced', 'Fast-paced'),
+             ('Slow-life', 'Slow-life')]
 
 
 class TripForm(FlaskForm):
