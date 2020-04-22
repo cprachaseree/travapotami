@@ -38,7 +38,6 @@ class Gender(Enum):
 
 
 class User(db.Model, UserMixin):
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(64), nullable=False)
@@ -56,7 +55,6 @@ class User(db.Model, UserMixin):
     photo = db.Column(db.LargeBinary(length=2**32 - 1))
     passport_number = db.Column(db.String(16), nullable=False)
     is_web_admin = db.Column(db.Boolean, nullable=False)
-
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         # initialize associated rating
@@ -97,7 +95,7 @@ class Group(db.Model):
     admins = db.relationship('User', secondary=group_admin)
     mates = db.relationship('User', secondary=group_mate)
     trips = db.relationship('Trip', backref='group')  # ongoing and past trip will be distinguished by Trip.finished instead
-
+    description = db.Column(db.Text, nullable=False)
 
 class Trip(db.Model):
 
@@ -106,7 +104,7 @@ class Trip(db.Model):
     participants = db.relationship('User', secondary=trip_participant)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))  # will exist if the trip is created by a group
     destination = db.Column(db.String(64), nullable=False)  # can implemente some kind of google maps api to have a enumeration-like list?
-    budget_min = db.Column(db.Float)
+    #budget_min = db.Column(db.Float)
     budget_max = db.Column(db.Float, nullable=False)
     date_from = db.Column(db.Date, nullable=False)
     date_to = db.Column(db.Date, nullable=False)
