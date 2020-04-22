@@ -1,68 +1,64 @@
 {% extends "base.html" %}
 {% block content %}
+
+
 <div class="container">
     <br>
+    <h1>Browse all public groups</h1>
     <h3>Click on the card to reveal more infomation.</h3>
+    {{ pagination.info }}
+
     <div class="row">
+    {%for i in range(0, 6)%} 
         <div class="col s12 m4">
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
-                <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
+            {% if loop.index+(page-1)*per_page <= result|length %}
+                <div class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
+                    </div>
+                    <div class="card-content">
+                        {{ loop.index+(page-1)*per_page-1 }}
+                        <span class="card-title activator grey-text text-darken-4"> {{ result[loop.index+(page-1)*per_page-1].group_name }}<i class="material-icons right">more_vert</i></span>
+                        <p>
+                            <!-- Modal Trigger -->
+                            <a class="waves-effect waves-light btn modal-trigger" href="#modal{{loop.index+(page-1)*per_page-1}}">Join<i class="material-icons small right">group_add</a></i>
+
+                            <!-- Modal Structure -->
+                            <div id="modal{{loop.index+(page-1)*per_page-1}}" class="modal">
+                                <div class="modal-content">
+                                <h4>Join a New Group</h4>
+                                <p>Are you sure you want to join {{ result[loop.index+(page-1)*per_page-1].group_name }} group?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{  url_for('group_blueprint.join_group', groupnum=result[loop.index+(page-1)*per_page-1] )  }}" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                                </div>
+                                <div class="model-close"></div>
+                            </div>
+                        </p>
+                    </div>
+
+                    <div class="card-reveal teal lighten-5">
+                        <span class="card-title grey-text text-darken-4">{{ result[loop.index+(page-1)*per_page-1].group_name }} <i class="material-icons right">close</i></span>
+                        <p>Here are some more information about this product that is only revealed once clicked on.</p>
+                    </div>
                 </div>
-                <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4">Travapotami<i class="material-icons right">more_vert</i></span>
-                <p><a href="#">Click here to know more about them</a></p>
-                </div>
-                <div class="card-reveal teal lighten-5">
-                <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                </div>
-            </div>
+            {% endif %}
+            
         </div>
 
-        <div class="col s12 m4">
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
-                <img class="activator" src="../../static/img/potami.jpg" width="200" height="200">
-                </div>
-                <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4">Travapotami<i class="material-icons right">more_vert</i></span>
-                <p><a href="#">Click here to know more about them</a></p>
-                </div>
-                <div class="card-reveal teal lighten-5">
-                <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col s12 m4">
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
-                <img class="activator" src="../../static/img/492812.jpg" width="200" height="200">
-                </div>
-                <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4">Travapotami<i class="material-icons right">more_vert</i></span>
-                <p><a href="#">Click here to know more about them</a></p>
-                </div>
-                <div class="card-reveal teal lighten-5">
-                <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                </div>
-            </div>
-        </div>
+    {%endfor%} 
     </div>
 
     <ul class="pagination center">
-        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-        <li class="active teal"><a href="#!">1</a></li>
-        <li class="waves-effect"><a href="#!">2</a></li>
-        <li class="waves-effect"><a href="#!">3</a></li>
-        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+        {{ pagination.links }}
       </ul>
+          
 
 </div>
 
-
-          
+<script>
+    $(document).ready(function(){
+        $('.modal').modal();
+    });
+</script>
 {% endblock content %}

@@ -47,6 +47,9 @@ def register():
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
             return redirect(url_for('auth_blueprint.login'))
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
@@ -81,7 +84,7 @@ def forgetpassword():
         flash("SUCCESS")
     return render_template('./auth/forgetpassword.html', title='Forget Password', form=form)
 
-# Edit usr information
+# Edit user information
 @auth_blueprint.route('/edit_account', methods=['GET', 'POST'])
 @login_required
 def edit_account():

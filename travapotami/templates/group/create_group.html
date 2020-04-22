@@ -5,6 +5,8 @@
     <div class="container">
         <h1 class="center">let's create a group!</h1>
         <h3 class="center">Once created, you can rename and edit your members later.</h3>
+        <h3>You are the group admin: {{ current_user.username }}</h3>
+        <br>
         <form action="/create_group" method="POST">
             <div class="input-field">
                 <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required>
@@ -12,6 +14,7 @@
             </div>
 
             <!-- Switch -->
+            <p>If your group is public, anyone can join your group.</p>
             <div class="switch">
                 <label>
                 Private
