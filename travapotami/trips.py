@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, request, url_for
 from flask_login import current_user
 from .forms import TripForm, SearchTripsForm, UpdateTrip
 from datetime import date, datetime, timedelta
-from .models import db, Trip
+from .models import db, Trip, User
 import pycountry
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
 
@@ -59,6 +59,9 @@ def create_trip():
 def my_trips():
     if current_user.is_authenticated:
         alltrips = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+        list2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+        for x in list2:
+            alltrips.append(x)
         trips = []
         for i in alltrips:
             new = {}
@@ -98,10 +101,13 @@ def display_trip(tripid):
             hostusername.append(x.username)
         new['hosts'] = hosts
         new['hostusername'] = hostusername
+    participants1 = []
+    if trip.participants:
+        for x in trip.participants:
+            participants1.append(x.first_name + " " + x.last_name)
+    new['participants'] = participants1
     country = pycountry.countries.get(alpha_2=trip.destination)  # append as country.name
     new['destination'] = country.name
-    if trip.participants:
-        new['participants'] = trip.participants
     new['budget_max'] = trip.budget_max
     new['date_from'] = trip.date_from
     new['date_to'] = trip.date_to
@@ -117,7 +123,30 @@ def display_trip(tripid):
 def edit_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
     form = UpdateTrip()
+
     if form.validate_on_submit():
+        if form.participants:
+            usernames = str(form.participants.data).split(',')
+            participants = []
+            for x in usernames:
+                user1 = User.query.filter_by(username=x).first()
+                if user1:
+                    participants.append(user1)
+                    flash(str(x) + 'added to trip')
+                else:
+                    flash(str(x) + 'does not exist')
+            trip.participants = participants
+        if form.participantsremoved:
+            usernames = str(form.participants.data).split(',')
+            for x in usernames:
+                user1 = User.query.filter_by(username=x).first()
+                if user1:
+                    participanttrips = Trip.query.filter(Trip.participants.contains(user1)).all()  # list of trips
+                    hostingtrips = Trip.query.filter_by(Trip.hosts.contains(user1)).all()  # list of trips
+                    for y in hostingtrips:
+                        y.hosts.remove(user1)
+                    for y in participanttrips:
+                        y.participants.remove(user1)
         trip.destination = form.destination.data
         trip.description = form.description.data
         trip.date_from = form.datebegin.data
@@ -129,11 +158,12 @@ def edit_trip(tripid):
         return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
     elif request.method == 'GET':
         form.destination.data = trip.destination
+        form.participants.data = trip.participants
         form.description.data = trip.description
         form.datebegin.data = trip.date_from
         form.dateend.data = trip.date_to
         form.max_budget.data = trip.budget_max
-        form.destination.data = trip.trip_type
+        form.triptype.data = trip.trip_type
     return render_template('./trips/edit_trip.html', title='Edit Trip', form=form)
 
 

@@ -17,6 +17,14 @@
                 <td>{{x}}</td>
             {%endfor%}
         </tr>
+        {%if result['participants']%}
+            <tr>
+                <th>Participants</th>
+                {%for x in result['participants']%}
+                    <td>{{x}}</td>
+                {%endfor%}
+            </tr>
+        {%endif%}
         <tr>
             <th>Destination</th>
             <td>{{result['destination']}}</td>
@@ -36,10 +44,6 @@
         <tr>
             <th>Trip Type</th>
             <td>{{result['trip_type']}}</td>
-        </tr>
-        <tr>
-            <th>Destination</th>
-            <td>{{result['destination']}}</td>
         </tr>
         <tr>
             <th>Trip Description</th>

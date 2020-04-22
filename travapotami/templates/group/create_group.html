@@ -7,7 +7,7 @@
         <h3 class="center">Once created, you can rename and edit your members later.</h3>
         <h3>You are the group admin: {{ current_user.username }}</h3>
         <br>
-        <form action="/create_group" method="POST">
+        <form action="" method="POST">
             <div class="input-field">
                 <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required>
                 <label for="group_name">Group Name</label>
@@ -39,7 +39,7 @@
                 <i class="material-icons right">send</i>
             </button>
         </form>
-        
+
     </div>
 </div>
 
@@ -62,7 +62,7 @@
                     <a onclick="removeMem(this)" class="btn-floating waves-effect waves-light"><i class="material-icons">delete</i></a>
                 </div>`);
         });
-        
+
     });
 
 </script>
