@@ -139,6 +139,8 @@ class SearchTripsForm(FlaskForm):
 
 class UpdateTrip(FlaskForm):
     destination = SelectField('Destination', choices=countires)
+    participants = StringField('Add Participants Usernames (separated by \',\' ex. User1,User2)')
+    participantsremoved = StringField('Remove Participants Usernames (separated by \',\' ex. User1,User2)')
     description = TextAreaField('Description', validators=[DataRequired()])
     datebegin = DateField('Begin Date', format='%Y-%m-%d')
     dateend = DateField('End Date', format='%Y-%m-%d')

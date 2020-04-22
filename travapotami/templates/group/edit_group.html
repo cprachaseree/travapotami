@@ -1,4 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Update Group {{ group.group_name }}</h1>
+<div class="container">
+    <h1>Update Group {{ group.group_name }}</h1>
+    <br>
+    <p> Current members: {{ "&nbsp;"|safe*5 }}  
+    {%for i in range(0, group.mates|length)%}
+    {{ group.mates[i] }}
+    {{ "&nbsp;"|safe*5 }}
+    {%endfor%}
+    </p>
+
+
+    <form action="" method="POST">
+        <br>
+        <div class="input-field">
+            <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required value="{{ group.group_name }}">
+            <label for="group_name">Group Name</label>
+        </div>
+        <div class="input-field col s12">
+            <br>
+            <input placeholder="Group Description" name="group-description" class="materialize-textarea" class="validate" required value="{{ group.description }}"></input>
+            <label for="group-description">Group Description</label>
+        </div>
+
+        <!-- Switch -->
+        <div class="switch">
+            <label>
+            Private
+            {% if group.public == True %}
+                <input class="input-field" type="checkbox" checked name="accessibility">
+            {%endif%}
+            {% if group.public == False %}
+                <input class="input-field" type="checkbox" name="accessibility">
+            {%endif%}
+            <span class="lever"></span>
+            Public
+            </label>
+        </div>
+
+        <p>Enter your group mates' username(s)</p>
+        <div id="members">
+        {%for i in range(0, group.mates|length)%}
+
+            <div class="input-field row" id="div_1">
+                <input id="member_{{ i+1 }}" class="col s8" type="text" name="member_{{ i+1 }}" class="validate" value="{{ group.mates[i].username }}">
+                <label for="Member">Member {{i+1}}</label>
+                <a onclick="removeMem(this)" class="btn-floating waves-effect waves-light"><i class="material-icons">delete</i></a>
+            </div>
+        {%endfor%}
+        </div>
+        <a id="add-btn" class="btn-floating waves-effect waves-light"><i class="material-icons">add</i></a>
+        <br>
+        <br>
+        <button class="btn waves-effect waves-light" type="submit">Edit Group
+            <i class="material-icons right">send</i>
+        </button>
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('group_blueprint.my_groups')  }}">Cancel</a>
+            <i class="material-icons right">cancel</i>
+        </div>
+    </form>
+    
+</div>
+
+<script>
+    function removeMem(button) {
+        $(button).parent().remove()
+    }
+
+   $(document).ready(function() {
+       var inputs = '{{ group.mates|length }}';
+       $("#1").on('click', function() {
+           $("#div_1").remove()
+       })
+       $("#add-btn").on('click', function() {
+           inputs++;
+           $("#members").append(`
+               <div class="input-field row" id="div_${inputs}">
+                   <input id="member_${inputs}" class="col s8" type="text" name="member_${inputs}"  class="validate">
+                   <label for="Member">Member</label>
+                   <a onclick="removeMem(this)" class="btn-floating waves-effect waves-light"><i class="material-icons">delete</i></a>
+               </div>`);
+       });
+       
+   });
+
+</script>
+
 {% endblock content %}

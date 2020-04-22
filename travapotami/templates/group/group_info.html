@@ -26,15 +26,25 @@
         </table>
     
         <br>
+        {% if is_admin == True %}
         <p>To add new member(s), please press edit group.</p>
         <div class="btn waves-effect waves-light">
             <a style="color:white" href="{{  url_for('group_blueprint.edit_group', group=group)  }}">Edit Group Details</a>
             <i class="material-icons right">edit</i>
         </div>
+
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('group_blueprint.delete_group', group=group)  }}">Delete Group</a>
+            <i class="material-icons right">delete</i>
+        </div>
+        {%endif%}
+
+        {% if is_admin == False %}
         <div class="btn waves-effect waves-light">
             <a style="color:white" href="{{  url_for('group_blueprint.leave_group', group=group)  }}">Leave Group</a>
             <i class="material-icons right">exit_to_app</i>
         </div>
+        {%endif%}
     </div>
 
 

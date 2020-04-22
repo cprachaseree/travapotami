@@ -17,7 +17,6 @@
                         <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
                     </div>
                     <div class="card-content">
-                        {{ loop.index+(page-1)*per_page-1 }}
                         <span class="card-title activator grey-text text-darken-4"> {{ result[loop.index+(page-1)*per_page-1].group_name }}<i class="material-icons right">more_vert</i></span>
                         <p>
                             <!-- Modal Trigger -->
@@ -30,7 +29,8 @@
                                 <p>Are you sure you want to join {{ result[loop.index+(page-1)*per_page-1].group_name }} group?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="{{  url_for('group_blueprint.join_group', groupnum=result[loop.index+(page-1)*per_page-1] )  }}" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                                    <a href="{{  url_for('group_blueprint.join_group', groupnum=result[loop.index+(page-1)*per_page-1] )  }}" class="modal-close waves-effect waves-teal btn-flat">Yes</a>
+                                    <a href="#" class="modal-close waves-effect waves-teal btn-flat">No</a>
                                 </div>
                                 <div class="model-close"></div>
                             </div>
@@ -39,7 +39,7 @@
 
                     <div class="card-reveal teal lighten-5">
                         <span class="card-title grey-text text-darken-4">{{ result[loop.index+(page-1)*per_page-1].group_name }} <i class="material-icons right">close</i></span>
-                        <p>Here are some more information about this product that is only revealed once clicked on.</p>
+                        <p>{{  result[loop.index+(page-1)*per_page-1].description  }}</p>
                     </div>
                 </div>
             {% endif %}
