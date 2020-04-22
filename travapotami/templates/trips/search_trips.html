@@ -3,7 +3,7 @@
 <div class="content-section">
     <div class="container">
         <h2>Join a Trip</h2>
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="">
             {{ form.hidden_tag() }}
             {% for field in form %}
                 {% if field.type != "SubmitField" and field.widget.input_type != 'hidden' %}

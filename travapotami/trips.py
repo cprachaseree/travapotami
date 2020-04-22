@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app
 from flask_login import current_user
-from .forms import TripForm, SearchTripsForm, UpdateTrip
+from .forms import TripForm, SearchTripsForm, UpdateTrip, AddHostParticipant
 from datetime import date, datetime, timedelta
 from .models import db, Trip, User
 import pycountry
@@ -63,31 +63,13 @@ def create_trip():
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
 def my_trips():
     if current_user.is_authenticated:
-        alltrips = Trip.query.filter(Trip.hosts.contains(current_user)).all()
-        list2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
-        for x in list2:
-            alltrips.append(x)
-        trips = []
+        t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+        t2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+        alltrips = list(set(t1) | set(t2))
         for i in alltrips:
-            new = {}
-            new['tripid'] = i.id
-            if i.hosts:
-                hosts = []
-                for x in i.hosts:
-                    hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
-                new['hosts'] = hosts
-            country = pycountry.countries.get(alpha_2=i.destination)  # append as country.name
-            new['destination'] = country.name
-            if i.participants:
-                new['participants'] = i.participants
-            new['budget_max'] = i.budget_max
-            new['date_from'] = i.date_from
-            new['date_to'] = i.date_to
-            new['length'] = i.length  # in days
-            new['trip_type'] = i.trip_type
-            new['imagecode'] = str(i.destination).lower()
-            trips.append(new)
-        return render_template('./trips/my_trips.html', title='Trips', result=trips)
+            i.country = pycountry.countries.get(alpha_2=i.destination).name
+            i.imagecode = str(i.destination).lower()
+        return render_template('./trips/my_trips.html', title='Trips', result=alltrips)
     else:
         flash("Login first please!")
         return redirect(url_for('auth_blueprint.login'))
@@ -153,23 +135,37 @@ def remove_host(tripid, userid):
     flash(user.first_name + 'is removed from hosts!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
-# @trips_blueprint.route('/trip/<int:tripid>/add_host/<int:userid>', methods=['GET'])
-# def add_host(tripid, userid):
-#     trip = Trip.query.filter_by(id=tripid).first()
-#     user = User.query.filter_by(id=userid).first()
-#     trip.hosts.append(user)
-#     db.session.commit()
-#     flash(user.first_name + 'is added to hosts!')
-#     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+@trips_blueprint.route('/trip/<int:tripid>/add_host', methods=['GET', 'POST'])
+def add_host(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    form = AddHostParticipant()
+    if form.validate_on_submit():
+        username = form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user != None:
+            trip.hosts.append(user)
+            db.session.commit()
+            return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
+        else:
+            flash("Username does not exist!")
+    elif request.method == 'GET':
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
 
-# @trips_blueprint.route('/trip/<int:tripid>/add_participant/<int:userid>', methods=['GET'])
-# def add_participants(tripid, userid):
-#     trip = Trip.query.filter_by(id=tripid).first()
-#     user = User.query.filter_by(id=userid).first()
-#     trip.participants.append(user)
-#     db.session.commit()
-#     flash(user.first_name + 'is added to participants!')
-#     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+@trips_blueprint.route('/trip/<int:tripid>/add_participant', methods=['GET', 'POST'])
+def add_participant(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    form = AddHostParticipant()
+    if form.validate_on_submit():
+        username = form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user != None:
+            trip.participants.append(user)
+            db.session.commit()
+            return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
+        else:
+            flash("Username does not exist!")
+    elif request.method == 'GET':
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
 
 @trips_blueprint.route('/trip/<int:tripid>/edit', methods=['GET', 'POST'])
 def edit_trip(tripid):
@@ -177,28 +173,28 @@ def edit_trip(tripid):
     form = UpdateTrip()
 
     if form.validate_on_submit():
-        if form.participants:
-            usernames = str(form.participants.data).split(',')
-            participants = []
-            for x in usernames:
-                user1 = User.query.filter_by(username=x).first()
-                if user1:
-                    participants.append(user1)
-                    flash(str(x) + 'added to the trip')
-                else:
-                    flash(str(x) + 'does not exist')
-            trip.participants = participants
-        if form.participantsremoved:
-            usernames = str(form.participants.data).split(',')
-            for x in usernames:
-                user1 = User.query.filter_by(username=x).first()
-                if user1:
-                    participanttrips = Trip.query.filter(Trip.participants.contains(user1)).all()  # list of trips
-                    hostingtrips = Trip.query.filter_by(Trip.hosts.contains(user1)).all()  # list of trips
-                    for y in hostingtrips:
-                        y.hosts.remove(user1)
-                    for y in participanttrips:
-                        y.participants.remove(user1)
+    #     if form.participants:
+    #         usernames = str(form.participants.data).split(',')
+    #         participants = []
+    #         for x in usernames:
+    #             user1 = User.query.filter_by(username=x).first()
+    #             if user1:
+    #                 participants.append(user1)
+    #                 flash(str(x) + 'added to the trip')
+    #             else:
+    #                 flash(str(x) + 'does not exist')
+    #         trip.participants = participants
+    #     if form.participantsremoved:
+    #         usernames = str(form.participants.data).split(',')
+    #         for x in usernames:
+    #             user1 = User.query.filter_by(username=x).first()
+    #             if user1:
+    #                 participanttrips = Trip.query.filter(Trip.participants.contains(user1)).all()  # list of trips
+    #                 hostingtrips = Trip.query.filter_by(Trip.hosts.contains(user1)).all()  # list of trips
+    #                 for y in hostingtrips:
+    #                     y.hosts.remove(user1)
+    #                 for y in participanttrips:
+    #                     y.participants.remove(user1)
         trip.destination = form.destination.data
         trip.description = form.description.data
         trip.date_from = form.datebegin.data
@@ -210,7 +206,7 @@ def edit_trip(tripid):
         return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
     elif request.method == 'GET':
         form.destination.data = trip.destination
-        form.participants.data = trip.participants
+        # form.participants.data = trip.participants
         form.description.data = trip.description
         form.datebegin.data = trip.date_from
         form.dateend.data = trip.date_to
@@ -224,28 +220,42 @@ def search_trips():
     form = SearchTripsForm()
     result = None
     trip_types = list_to_string(form.triptype.data)
-    if form.validate_on_submit():
-        if form.max_budget.data and form.triptype.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.budget_max <= form.max_budget.data,
-                Trip.trip_type.like(trip_types)
-            )
-        elif form.max_budget.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.budget_max <= form.max_budget.data
-            )
-        elif form.triptype.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.trip_type.like(trip_types)
-            )
-        else:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data
-            )
-        flash(repr(result))
 
+    if request.method == 'POST':
+        if form.max_budget.data != None and not isinstance(float(form.max_budget.data), float) and not isinstance(int(form.max_budget.data), int):
+            flash("Max budget should be decimal.")
+        else:
+            if form.max_budget.data and form.triptype.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.budget_max <= form.max_budget.data,
+                    Trip.trip_type.like(trip_types)
+                )
+            elif form.max_budget.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.budget_max <= form.max_budget.data
+                )
+            elif form.triptype.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.trip_type.like(trip_types)
+                )
+            else:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data
+                )
+            result = result.all()
+            if result:
+                t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+                t2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+                mytrips = list(set(t1) | set(t2))
+                flash("Viewing result trips.")
+                return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips)
+            else:
+                flash("Your search returns no query. Please try another one.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(f"{i}: {e}")
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
 
