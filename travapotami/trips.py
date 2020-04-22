@@ -70,6 +70,7 @@ def my_trips():
             new['date_to'] = i.date_to
             new['length'] = i.length  # in days
             new['trip_type'] = i.trip_type
+            new['imagecode'] = str(i.destination).lower()
             trips.append(new)
         return render_template('./trips/my_trips.html', title='Trips', result=trips)
     else:
@@ -96,6 +97,7 @@ def display_trip(tripid):
     new['date_to'] = trip.date_to
     new['length'] = trip.length  # in days
     new['trip_type'] = trip.trip_type
+    new['imagecode'] = str(trip.destination).lower()
     return render_template('./trips/display_trip.html', title="Your trip", result=new)
 
 
