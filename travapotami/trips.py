@@ -63,7 +63,7 @@ def create_trip():
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
 def my_trips():
     if current_user.is_authenticated:
-        alltrips = Trip.query.filter(Trip.hosts.contains(current_user), Trip.participants.contains(current_user)).all()
+        alltrips = Trip.query.filter(Trip.hosts.contains(current_user)).all()
         list2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
         for x in list2:
             alltrips.append(x)
