@@ -139,11 +139,15 @@ class SearchTripsForm(FlaskForm):
 
 class UpdateTrip(FlaskForm):
     destination = SelectField('Destination', choices=countires)
-    participants = StringField('Add Participants Usernames (separated by \',\' ex. User1,User2)')
-    participantsremoved = StringField('Remove Participants Usernames (separated by \',\' ex. User1,User2)')
-    description = TextAreaField('Description', validators=[DataRequired()])
+    # participants = StringField('Add Participants Usernames (separated by \',\' ex. User1,User2)')
+    # participantsremoved = StringField('Remove Participants Usernames (separated by \',\' ex. User1,User2)')
+    description = TextAreaField('Description')
     datebegin = DateField('Begin Date', format='%Y-%m-%d')
     dateend = DateField('End Date', format='%Y-%m-%d')
-    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
-    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type)
     submit = SubmitField('Update')
+
+class AddHostParticipant(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Add')

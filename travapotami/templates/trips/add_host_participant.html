@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <h1>Enter a Username!</h1>   
+        <form action="" method="POST" class="container">
+            {{ form.csrf_token }}
+            <div class="input-field">
+                {{ form.username }}
+                <label>{{ form.username.label }}</label>
+            </div>
+            <div class="btn waves-effect waves-light">
+                {{form.submit()}}
+                <i class="material-icons right">send</i>
+            </div>
+        </form>
+        <br>
+
+    </div>
+    <br>
+</div>
+{% endblock content %}
