@@ -21,20 +21,25 @@
                             to {{trip['destination']}} on {{trip['date_from']}}</a></p>
                 </div>
                 <div class="card-reveal teal lighten-5">
-                    <span class="card-title grey-text text-darken-4">Card Title<i
+                    <span class="card-title grey-text text-darken-4">{{ trip.destination }}<i
                             class="material-icons right">close</i></span>
                     <p>{{ trip.description }}</p>
                     
                     {% if trip in mytrips %}
-                        <p><i>You are already in this Trip!</i></p>
+                        <p><i>You are already in this trip!</i></p>
                     {% else %}
                         <!-- TODO let this user join trip -->
+                        <!--Maybe do something else if this user is pending to join-->
+                        {% if current_user in trip.pending_participants %}
+                            <p><i>You have already requested to join this trip!</i></p>
+                        {% else %}
                         <div class="btn waves-effect waves-light">
                             <a style="color:black"
-                                href="#">Join
+                                href="{{ url_for('trips_blueprint.join_trip', tripid=trip.id) }}">Request To Join
                                 <i style="color: white" class="material-icons right">add</i>
                             </a>
                         </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
