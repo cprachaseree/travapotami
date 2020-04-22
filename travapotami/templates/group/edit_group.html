@@ -17,6 +17,11 @@
             <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required value="{{ group.group_name }}">
             <label for="group_name">Group Name</label>
         </div>
+        <div class="input-field col s12">
+            <br>
+            <input placeholder="Group Description" name="group-description" class="materialize-textarea" class="validate" required value="{{ group.description }}"></input>
+            <label for="group-description">Group Description</label>
+        </div>
 
         <!-- Switch -->
         <div class="switch">
