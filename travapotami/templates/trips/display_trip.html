@@ -37,6 +37,14 @@
             <th>Trip Type</th>
             <td>{{result['trip_type']}}</td>
         </tr>
+        <tr>
+            <th>Destination</th>
+            <td>{{result['destination']}}</td>
+        </tr>
+        <tr>
+            <th>Trip Description</th>
+            <td>{{result['description']}}</td>
+        </tr>
     </table>
     <br>
     {%if result['user'] is in result['hostusername']%}
