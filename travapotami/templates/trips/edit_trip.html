@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <h2>Edit Your Trip</h2>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {% for field in form %}
+                {% if field.type != "SubmitField" and field.widget.input_type != 'hidden' %}
+                    <div class="input-field">
+                        {{ field }}
+                        <label>{{ field.label }}</label>
+                    </div>
+                    <br>
+                {% endif %}
+            {% endfor %}
+            <div class="btn waves-effect waves-light">
+                {{ form.submit() }}
+                <i class="material-icons right">send</i>
+            </div>
+        </form>
+        <br>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>
+{% endblock content %}

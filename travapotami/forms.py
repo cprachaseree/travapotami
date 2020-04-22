@@ -367,3 +367,13 @@ class SearchTripsForm(FlaskForm):
     max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[NumberRange(min=0.0)])
     triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
     submit = SubmitField('Search')
+
+
+class UpdateTrip(FlaskForm):
+    destination = SelectField('Destination', choices=countires)
+    description = TextAreaField('Description', validators=[DataRequired()])
+    datebegin = DateField('Begin Date', format='%Y-%m-%d')
+    dateend = DateField('End Date', format='%Y-%m-%d')
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
+    submit = SubmitField('Update')
