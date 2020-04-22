@@ -2,69 +2,97 @@
 
 {%block content%}
 <div class="container">
-    <h2 class="center">Your trip to {{result['destination']}}!</h2>
+    <h2 class="center">Your trip to {{destination}}!</h2>
 </div>
 <div class="container center">
-    <img src="https://lipis.github.io/flag-icon-css/flags/4x3/{{result['imagecode']}}.svg" style="width:30%;">
+    <img src="https://lipis.github.io/flag-icon-css/flags/4x3/{{imagecode}}.svg" style="width:30%;">
 
 </div>
 <br>
 <div class="container">
     <table class="highlight centered" >
-        <tr>
-            <th>Hosts</th>
-            {%for x in result['hosts']%}
-                <td>{{x}}</td>
-            {%endfor%}
-        </tr>
-        {%if result['participants']%}
-            <tr>
-                <th>Participants</th>
-                {%for x in result['participants']%}
-                    <td>{{x}}</td>
-                {%endfor%}
-            </tr>
-        {%endif%}
-        <tr>
             <th>Destination</th>
-            <td>{{result['destination']}}</td>
+            <td>{{destination}}</td>
         </tr>
         <tr>
             <th>Start Date</th>
-            <td>{{result['date_from']}}</td>
+            <td>{{trip.date_from}}</td>
         </tr>
         <tr>
             <th>End Date</th>
-            <td>{{result['date_to']}}</td>
+            <td>{{trip.date_to}}</td>
         </tr>
         <tr>
             <th>Maximum Budget</th>
-            <td>{{result['budget_max']}}</td>
+            <td>{{trip.budget_max}} USD</td>
         </tr>
         <tr>
             <th>Trip Type</th>
-            <td>{{result['trip_type']}}</td>
+            <td>{{trip.trip_type}}</td>
         </tr>
         <tr>
             <th>Trip Description</th>
-            <td>{{result['description']}}</td>
+            <td>{{trip.description}}</td>
         </tr>
+        <tr>
+            <th>Hosts 
+            </th>
+            <td>
+                <table>
+                    {%for x in trip.hosts%}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('auth_blueprint.display_account', username=x.username) }}">
+                                {{x.first_name + " " + x.last_name}}
+                            </a>
+                        </td>
+                        {%if user is in trip.hosts and num_of_hosts > 1%}
+                            <td>
+                                <a class="btn-small" href="{{ url_for('trips_blueprint.remove_host', tripid=trip.id, userid=x.id) }}">Remove</a>
+                            </td>
+                        {%endif%}
+                        <br>
+                    </tr>
+                    {%endfor%}
+                    </table>
+            </td>
+        </tr>
+        {%if trip.participants%}
+            <tr>
+                <th>Participants</th>
+                <td>
+                    <table>
+                    {%for x in trip.participants%}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('auth_blueprint.display_account', username=x.username) }}">
+                                {{x.first_name + " " + x.last_name}}
+                            </a>
+                        </td>
+                        {%if user is in trip.hosts%}
+                            <td>
+                                <a class="btn-small" href="{{ url_for('trips_blueprint.remove_participant', tripid=trip.id, userid=x.id) }}">Remove</a>
+                            </td>
+                        {%endif%}
+                        <br>
+                    </tr>
+                    {%endfor%}
+                    </table>
+                </td>
+            </tr>
+        {%endif%}
+        <tr>
     </table>
     <br>
-    {%if result['user'] is in result['hostusername']%}
+    {%if user is in trip.hosts%}
 
-        <a href="{{url_for('trips_blueprint.edit_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
-        <a href="{{url_for('trips_blueprint.requests_manager',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Approve/Reject Requests</a>
-
+        <a href="{{url_for('trips_blueprint.edit_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
+        <a href="{{url_for('trips_blueprint.requests_manager',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Approve/Reject Requests</a>
     {%endif%}
-    {%if result['user'] is  not in result['hostusername'] and result['user'] is  not in result['participant']%}
-
-        <a href="{{url_for('trips_blueprint.join_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Request to Join</a>
-
+    {%if user is not in trip.hosts and user is  not in trip.participants%}
+        <a href="{{url_for('trips_blueprint.join_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Request to Join</a>
+        
     {%endif%}
     <br>
-
 </div>
-
-
 {%endblock%}

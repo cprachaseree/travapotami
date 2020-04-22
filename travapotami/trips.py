@@ -98,32 +98,10 @@ def display_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
     if trip.pending_participants and (current_user in trip.hosts):
         flash('Your trip has pending request to join')
-    new = {}
-    new['tripid'] = trip.id
-    if trip.hosts:
-        hosts = []
-        hostusername = []
-        for x in trip.hosts:
-            hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
-            hostusername.append(x.username)
-        new['hosts'] = hosts
-        new['hostusername'] = hostusername
-    participants1 = []
-    if trip.participants:
-        for x in trip.participants:
-            participants1.append(x.first_name + " " + x.last_name)
-    new['participants'] = participants1
-    country = pycountry.countries.get(alpha_2=trip.destination)  # append as country.name
-    new['destination'] = country.name
-    new['budget_max'] = trip.budget_max
-    new['date_from'] = trip.date_from
-    new['date_to'] = trip.date_to
-    new['length'] = trip.length  # in days
-    new['trip_type'] = trip.trip_type
-    new['imagecode'] = str(trip.destination).lower()
-    new['description'] = trip.description
-    new['user'] = current_user.username
-    return render_template('./trips/display_trip.html', title="Your trip", result=new)
+    destination = pycountry.countries.get(alpha_2=trip.destination).name
+    imagecode = str(trip.destination).lower()
+    num_of_hosts = len(trip.hosts)
+    return render_template('./trips/display_trip.html', title="Your Trip", trip=trip, destination=destination, imagecode=imagecode, user=current_user, num_of_hosts=num_of_hosts)
 
 @trips_blueprint.route('/trip/<int:tripid>/join_trip', methods=['GET'])
 def join_trip(tripid):
@@ -145,6 +123,7 @@ def participant_approve(tripid, userid):
     trip.pending_participants.remove(user)
     trip.participants.append(user)
     db.session.commit()
+    flash(user.name + 'is added to participants!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])
@@ -153,10 +132,46 @@ def participant_reject(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.pending_participants.remove(user)
     db.session.commit()
+    flash(user.name + 'is rejected!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
+@trips_blueprint.route('/trip/<int:tripid>/remove_participant/<int:userid>', methods=['GET'])
+def remove_participant(tripid, userid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    user = User.query.filter_by(id=userid).first()
+    trip.participants.remove(user)
+    db.session.commit()
+    flash(user.first_name + 'is removed from participants!')
+    return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
-@trips_blueprint.route('/edit_trip/<int:tripid>', methods=['GET', 'POST'])
+@trips_blueprint.route('/trip/<int:tripid>/remove_host/<int:userid>', methods=['GET'])
+def remove_host(tripid, userid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    user = User.query.filter_by(id=userid).first()
+    trip.hosts.remove(user)
+    db.session.commit()
+    flash(user.first_name + 'is removed from hosts!')
+    return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+
+# @trips_blueprint.route('/trip/<int:tripid>/add_host/<int:userid>', methods=['GET'])
+# def add_host(tripid, userid):
+#     trip = Trip.query.filter_by(id=tripid).first()
+#     user = User.query.filter_by(id=userid).first()
+#     trip.hosts.append(user)
+#     db.session.commit()
+#     flash(user.first_name + 'is added to hosts!')
+#     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+
+# @trips_blueprint.route('/trip/<int:tripid>/add_participant/<int:userid>', methods=['GET'])
+# def add_participants(tripid, userid):
+#     trip = Trip.query.filter_by(id=tripid).first()
+#     user = User.query.filter_by(id=userid).first()
+#     trip.participants.append(user)
+#     db.session.commit()
+#     flash(user.first_name + 'is added to participants!')
+#     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+
+@trips_blueprint.route('/trip/<int:tripid>/edit', methods=['GET', 'POST'])
 def edit_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
     form = UpdateTrip()
@@ -169,7 +184,7 @@ def edit_trip(tripid):
                 user1 = User.query.filter_by(username=x).first()
                 if user1:
                     participants.append(user1)
-                    flash(str(x) + 'added to trip')
+                    flash(str(x) + 'added to the trip')
                 else:
                     flash(str(x) + 'does not exist')
             trip.participants = participants
