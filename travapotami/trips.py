@@ -96,6 +96,8 @@ def my_trips():
 @trips_blueprint.route('/trip/<int:tripid>', methods=['GET', 'POST'])
 def display_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
+    if trip.pending_participants and (current_user in trip.hosts):
+        flash('Your trip has pending request to join')
     new = {}
     new['tripid'] = trip.id
     if trip.hosts:
@@ -122,6 +124,36 @@ def display_trip(tripid):
     new['description'] = trip.description
     new['user'] = current_user.username
     return render_template('./trips/display_trip.html', title="Your trip", result=new)
+
+@trips_blueprint.route('/trip/<int:tripid>/join_trip', methods=['GET'])
+def join_trip(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    trip.pending_participants.append(current_user)
+    db.session.commit()
+    flash('Successfully request to join!')
+    return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+
+@trips_blueprint.route('/trip/<int:tripid>/request_manager', methods=['GET'])
+def requests_manager(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    return render_template('./trips/requests_manager.html', title="Manage Requests", trip=trip)
+
+@trips_blueprint.route('/trip/<int:tripid>/request_manager/approve/<int:userid>', methods=['GET'])
+def participant_approve(tripid, userid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    user = User.query.filter_by(id=userid).first()
+    trip.pending_participants.remove(user)
+    trip.participants.append(user)
+    db.session.commit()
+    return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
+
+@trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])
+def participant_reject(tripid, userid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    user = User.query.filter_by(id=userid).first()
+    trip.pending_participants.remove(user)
+    db.session.commit()
+    return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 
 @trips_blueprint.route('/edit_trip/<int:tripid>', methods=['GET', 'POST'])

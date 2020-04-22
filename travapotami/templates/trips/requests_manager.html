@@ -1,0 +1,30 @@
+{%extends "base.html"%}
+
+{%block content%}
+<div class="content-section">
+    <div class="container">
+        <h2>Pending Participants</h2>
+        <a class="btn-small" href="{{url_for('trips_blueprint.display_trip',tripid=trip.id)}}">Back to Trip</a>
+        <table class="highlight centered" >
+            {%if trip.pending_participants%}
+                {%for x in trip.pending_participants%}
+                <tr>
+                    <th>{{x.username}}</th>
+                    <td><a href="{{url_for('trips_blueprint.participant_approve',tripid=trip.id, userid=x.id)}}" class="btn-small">Approve</a>
+                    <a class="btn-small">Reject</a></td>
+                </tr>
+                {%endfor%}
+            {%endif%}
+        </table>
+        <br>
+    </div>
+    <br>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>
+{%endblock%}

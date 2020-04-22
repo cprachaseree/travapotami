@@ -53,11 +53,15 @@
     <br>
     {%if result['user'] is in result['hostusername']%}
 
-                <a href="{{url_for('trips_blueprint.edit_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
+        <a href="{{url_for('trips_blueprint.edit_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
+        <a href="{{url_for('trips_blueprint.requests_manager',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Approve/Reject Requests</a>
 
     {%endif%}
-    <br>
-    <br>
+    {%if result['user'] is  not in result['hostusername'] and result['user'] is  not in result['participant']%}
+
+        <a href="{{url_for('trips_blueprint.join_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Request to Join</a>
+
+    {%endif%}
     <br>
 
 </div>

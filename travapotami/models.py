@@ -25,6 +25,9 @@ trip_host = db.Table('trip_host',
 trip_participant = db.Table('trip_participant',
                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                             db.Column('trip_id', db.Integer, db.ForeignKey('trip.id'), primary_key=True))
+trip_pending_participant = db.Table('trip_pending_participant',
+                            db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+                            db.Column('trip_id', db.Integer, db.ForeignKey('trip.id'), primary_key=True))
 
 
 class Gender(Enum):
@@ -102,9 +105,9 @@ class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     hosts = db.relationship('User', secondary=trip_host)
     participants = db.relationship('User', secondary=trip_participant)
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))  # will exist if the trip is created by a group
-    destination = db.Column(db.String(64), nullable=False)  # can implemente some kind of google maps api to have a enumeration-like list?
-    #budget_min = db.Column(db.Float)
+    pending_participants = db.relationship('User', secondary=trip_pending_participant)
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    destination = db.Column(db.String(64), nullable=False)
     budget_max = db.Column(db.Float, nullable=False)
     date_from = db.Column(db.Date, nullable=False)
     date_to = db.Column(db.Date, nullable=False)
