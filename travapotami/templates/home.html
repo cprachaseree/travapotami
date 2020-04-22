@@ -26,53 +26,81 @@
         }
     </style>
 
-    <div class="slideshow-container">
-        <div class="slides fade">
-            <img src="../static/img/492683.jpg" style="width:100%">
-            <div class="centered">Let's Explore: <br>Reynisfjara Beach, Iceland</div>
-        </div>
-        <div class="slides fade">
-            <img src="../static/img/492681.jpg" style="width:100%">
-            <div class="centered">Let's Explore: <br>Ville-Marie, <br>Montreal</div>
-        </div>
-        <div class="slides fade">
-            <img src="../static/img/492682.jpg" style="width:100%">
-            <div class="centered white-text">Let's Explore: <br>Cave and Basin National Historic Site, Alberta</div>
-        </div>
-        <div class="slides fade">
-            <img src="../static/img/492794.jpg" style="width:100%">
-            <div class="centered white-text">Let's Explore: <br>Parc Omega, Quebec</div>
-        </div>
-        <div class="slides fade">
-            <img src="../static/img/492679.jpg" style="width:100%">
-            <div class="centered">Let's Explore: <br>Cienfuegos, Cuba</div>
-        </div>
+
+    <div class="slider" >
+        <ul class="slides">
+        <li>
+            <img src="../static/img/492683.jpg"> 
+            <div class="caption right-align teal-text text-darken-3">
+            <h5>Let's Explore</h5>
+            <h2 class="teal-text text-darken-3">Reynisfjara Beach, Iceland</h2>
+            </div>
+        </li>
+        <li>
+            <img src="../static/img/492681.jpg"> 
+            <div class="caption center-align teal-text text-darken-3">
+            <h5>Let's Explore</h5>
+            <h2 class="teal-text text-darken-3">Ville-Marie, Montreal</h2>
+            </div>
+        </li>
+        <li>
+            <img src="../static/img/492682.jpg">
+            <div class="caption left-align">
+            <h5>Let's Explore</h5>
+            <h2 class="grey-text text-lighten-3">Cave and Basin National Historic Site, Alberta</h2>
+            </div>
+        </li>
+        <li>
+            <img src="../static/img/492794.jpg"> 
+            <div class="caption center-align">
+            <h5>Let's Explore</h5>
+            <h2 class="grey-text text-lighten-3">Parc Omega, Quebec</h2>
+            </div>
+        </li>
+        <li>
+            <img src="../static/img/492679.jpg"> 
+            <div class="caption left-align">
+            <h5>Let's Explore</h5>
+            <h2 class="grey-text text-lighten-3">Cienfuegos, Cuba</h2>
+            </div>
+        </li>
+        </ul>
     </div>
 
-    <script>
-        var slideIndex = 0;
-        showSlides();
-
-        function showSlides() {
-            var slides = document.getElementsByClassName("slides");
-            var i;
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";  
-            }
-            slideIndex++;
-            if (slideIndex > slides.length) {
-                slideIndex = 1
-                }    
-            slides[slideIndex-1].style.display = "block";  
-            setTimeout(showSlides, 4000);
-        }
-    </script>
-
     <br>
-    <div class="content-section, center, container">
-        <h1>Hippopotami live in groups of 15 or more animals.</h1>
-        <img class="responsive-img" src="../static/img/travapotami2-removebg.png">
+
+    <div class="container center">
+        <h2> WELCOME TO TRAVOPOTAMI </h2>
+        <h3> Learn a little more about us by clicking on the questions below!</h3>
+        <img class="responsive-img" src="../static/img/travapotami2-removebg.png" width=25%>
+        <ul class="collapsible popout">
+            <li>
+              <div class="collapsible-header"><i class="material-icons">question_answer</i>Wonder what TRAVAPOTAMI means?</div>
+              <div class="collapsible-body"><span>TRAVEL + HIPPOPOTAMI = TRAVAPOTAMI</span></div>
+            </li>
+            <li>
+              <div class="collapsible-header"><i class="material-icons">nature_people</i>What inspires our name and our chosen animal?</div>
+              <div class="collapsible-body"><span>Hippopotami live in groups of 15 or more animals.</span></div>
+            </li>
+            <li>
+              <div class="collapsible-header"><i class="material-icons">directions_run</i>Who are we?</div>
+              <div class="collapsible-body"><span>We're still figuring out ourselves :P</span></div>
+            </li>
+          </ul>
+        
     </div>
 </body>
 
+<script>
+    $(document).ready(function(){
+        $('.slider').slider({
+            height : 800,
+            interval: 5000
+        });
+    });
+
+    $(document).ready(function(){
+        $('.collapsible').collapsible();
+    });
+</script>
 {% endblock content %}

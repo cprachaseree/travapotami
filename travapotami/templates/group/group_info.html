@@ -2,9 +2,17 @@
 {% block content %}
 <div class="content-section">
     <h1>About Group {{ group.group_name }}</h1>
-    <div class="container">
-        <br>
-        <p>Group Details</p>
+    <div class="container center">
+        <h3> {{ group.description }} </h3> 
+
+        {% if group.icon == 1 %}
+            <img class="responsive-imgd" src="../../static/img/travapotami6.png" width=30%>
+        {% elif group.icon == 2 %}
+            <img class="responsive-img" src="../../static/img/potami3.png"  width=15%>
+        {% elif group.icon == 3 %}
+            <img class="responsive-img" src="../../static/img/potami2.jpg" width=15%>
+        {% endif %}
+
         <table class="responsive-table">
             <tr>
                 <th>Number of Members</th>
@@ -52,6 +60,10 @@
 </div>
 
 
-
+<script>
+    $(document).ready(function(){
+        $('.materialboxed').materialbox();
+    });
+</script>
 
 {% endblock content %}

@@ -17,13 +17,7 @@ def create_group():
             group_name = request.form['groupname']
             public = request.form.get('accessibility')
             description = request.form['group-description']
-            icon = 0
-            if request.form.get('icon1') == "on":
-                icon = 1
-            elif request.form.get('icon2') == "on":
-                icon = 2
-            elif request.form.get('icon3') == "on":
-                icon = 3
+            icon = request.form['icon']
             flash(icon)
 
             if public:
@@ -42,7 +36,8 @@ def create_group():
 
             group = Group( group_name = group_name,
                             public = public,
-                            description = description
+                            description = description,
+                            icon = icon
             )
             db.session.add(group)
             db.session.commit()
@@ -90,23 +85,23 @@ def edit_group(group):
         group_name = request.form['groupname']
         public = request.form.get('accessibility')
         description = request.form['group-description']
+        icon = request.form['icon']
+
         if public:
             public = True
-            flash("Public Group")
         else:
             public = False
-            flash("Private Group")
         usernames = []
 
         for x in request.form:
             if x == "groupname" or x == "group-description" or not request.form[x] or request.form[x] == 'on':
                 continue
             usernames.append(request.form[x])
-        flash(usernames)
         
         group.group_name = group_name
         group.public = public
         group.description = description
+        group.icon = icon
 
         to_add = []
         group_search = Group.query.filter_by(id=groupnum).first()
@@ -114,14 +109,13 @@ def edit_group(group):
             user_search = User.query.filter_by(username=username).first()
             if user_search != None:
                 if not user_search in group_search.mates or not user_search in group_search.admins:
-                    flash(user_search.username)
                     to_add.append(user_search)
                     flash(f"{user_search.username} added to group")
                 else:
                     flash(f"{user_search.username} already in group!")
         group.mates = to_add
-        flash(f"{group_name} is edited to {len(to_add)+1} member(s).")
         db.session.commit()
+        flash("Your group is edited")
 
         return redirect(url_for('group_blueprint.my_groups'))
     return render_template('./group/edit_group.html', title='Edit Group', group=group)

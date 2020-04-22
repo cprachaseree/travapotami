@@ -99,6 +99,7 @@ class Group(db.Model):
     mates = db.relationship('User', secondary=group_mate)
     trips = db.relationship('Trip', backref='group')  # ongoing and past trip will be distinguished by Trip.finished instead
     description = db.Column(db.Text, nullable=False)
+    icon = db.Column(db.Integer, nullable=False)
 
 class Trip(db.Model):
 
