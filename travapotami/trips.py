@@ -63,31 +63,13 @@ def create_trip():
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
 def my_trips():
     if current_user.is_authenticated:
-        alltrips = Trip.query.filter(Trip.hosts.contains(current_user)).all()
-        list2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
-        for x in list2:
-            alltrips.append(x)
-        trips = []
+        t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+        t2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+        alltrips = list(set(t1) | set(t2))
         for i in alltrips:
-            new = {}
-            new['tripid'] = i.id
-            if i.hosts:
-                hosts = []
-                for x in i.hosts:
-                    hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
-                new['hosts'] = hosts
-            country = pycountry.countries.get(alpha_2=i.destination)  # append as country.name
-            new['destination'] = country.name
-            if i.participants:
-                new['participants'] = i.participants
-            new['budget_max'] = i.budget_max
-            new['date_from'] = i.date_from
-            new['date_to'] = i.date_to
-            new['length'] = i.length  # in days
-            new['trip_type'] = i.trip_type
-            new['imagecode'] = str(i.destination).lower()
-            trips.append(new)
-        return render_template('./trips/my_trips.html', title='Trips', result=trips)
+            i.country = pycountry.countries.get(alpha_2=i.destination).name
+            i.imagecode = str(i.destination).lower()
+        return render_template('./trips/my_trips.html', title='Trips', result=alltrips)
     else:
         flash("Login first please!")
         return redirect(url_for('auth_blueprint.login'))
