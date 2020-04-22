@@ -35,7 +35,7 @@ def create_trip():
                 trip_types = trip_types + trip_type + ", "
             else:
                 trip_types = trip_types + trip_type
-        
+
         trip = Trip(hosts=[current_user],
                     destination=form.destination.data,
                     budget_max=form.max_budget.data,
@@ -51,7 +51,7 @@ def create_trip():
         db.session.add(trip)
         db.session.commit()
         flash("Successfully created trip!")
-        return render_template('./trips/trip.html', title='Created', result=result)
+        return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
     return render_template('./trips/create_trip.html', title='Create Trip', form=form)
 
 
@@ -108,6 +108,7 @@ def display_trip(tripid):
     new['length'] = trip.length  # in days
     new['trip_type'] = trip.trip_type
     new['imagecode'] = str(trip.destination).lower()
+    new['description'] = trip.description
     new['user'] = current_user.username
     return render_template('./trips/display_trip.html', title="Your trip", result=new)
 
