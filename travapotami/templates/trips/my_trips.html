@@ -36,8 +36,11 @@
     {%endif%}
 
     {%if not result%}
+    <div >
+    <br>
         <h2>You don't have any trips yet! Do you want to join one now?</h2>
-            <a href="{{  url_for('trips_blueprint.join_trip')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Search for trips!">Join a Trip</a>
+            <a href="{{  url_for('trips_blueprint.search_trips')  }}" class="col s4 btn-large" style="center" data-position="bottom" data-tooltip="Search for trips!">Join a Trip</a>
+    </div>
     {%endif%}
 
 </div>

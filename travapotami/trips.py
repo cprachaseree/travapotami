@@ -105,11 +105,6 @@ def display_trip(tripid):
     return render_template('./trips/display_trip.html', title="Your trip", result=new)
 
 
-@trips_blueprint.route('/join_trip', methods=['GET', 'POST'])
-def join_trips():
-    return render_template('./trips/choose_trip.html', title='Choose Trip')
-
-
 @trips_blueprint.route('/edit_trip/<int:tripid>', methods=['GET', 'POST'])
 def edit_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
