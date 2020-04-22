@@ -245,11 +245,13 @@ def search_trips():
                 result = Trip.query.filter(
                     Trip.destination == form.destination.data
                 )
+            result = result.all()
             if result:
-                result = result.all()
-                # view the trips
+                t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+                t2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+                mytrips = list(set(t1) | set(t2))
                 flash("Viewing result trips.")
-                return render_template('./trips/result_trips.html', title='Result Trip', result=result)
+                return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips)
             else:
                 flash("Your search returns no query. Please try another one.")
     if form.errors:
