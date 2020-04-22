@@ -253,7 +253,7 @@ def search_trips():
                 result = result.all()
                 # view the trips
                 flash("Viewing result trips.")
-                pass
+                return render_template('./trips/result_trips.html', title='Result Trip', result=result)
             else:
                 flash("Your search returns no query. Please try another one.")
     if form.errors:
