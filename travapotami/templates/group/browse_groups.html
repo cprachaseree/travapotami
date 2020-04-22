@@ -8,6 +8,24 @@
     <h3>Click on the card to reveal more infomation.</h3>
     {{ pagination.info }}
 
+
+    <div class="nav-wrapper">
+        <form class="col s12" action="" method="POST">
+          <div class="input-field row">
+            <div class="input-field col s6">
+                <input name="search" id="search" type="search" required>
+                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+            </div>
+            <div class="input-field col s6">
+                <button class="btn waves-effect waves-light" type="submit">
+                    <i class="material-icons">send</i>
+                </button>
+            </div>
+          </div>
+
+        </form>
+    </div>
+
     <div class="row">
     {%for i in range(0, 6)%} 
         <div class="col s12 m4">

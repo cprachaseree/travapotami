@@ -17,6 +17,15 @@ def create_group():
             group_name = request.form['groupname']
             public = request.form.get('accessibility')
             description = request.form['group-description']
+            icon = 0
+            if request.form.get('icon1') == "on":
+                icon = 1
+            elif request.form.get('icon2') == "on":
+                icon = 2
+            elif request.form.get('icon3') == "on":
+                icon = 3
+            flash(icon)
+
             if public:
                 public = True
                 flash("Public Group")
@@ -117,8 +126,15 @@ def edit_group(group):
         return redirect(url_for('group_blueprint.my_groups'))
     return render_template('./group/edit_group.html', title='Edit Group', group=group)
 
-@group_blueprint.route('/browse_groups')
+@group_blueprint.route('/browse_groups', methods=['GET', 'POST'])
 def browse_groups():
+    if request.method == 'POST':
+        flash(request.form['search'])
+        result = Group.query.filter_by(group_name=request.form['search']).all()
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        pagination = Pagination(page=page, total=len(result), per_page=6)       
+        return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
+    
     result = Group.query.filter_by(public='1').all()
     page = request.args.get(get_page_parameter(), type=int, default=1)
     pagination = Pagination(page=page, total=len(result), per_page=6)

@@ -12,6 +12,26 @@
                 <input placeholder="Enter your group name" name="groupname" id="group_name" type="text" class="validate" required>
                 <label for="group_name">Group Name</label>
             </div>
+            <p>
+                <p>Choose your group icon.</p>
+                <label>
+                  <input name="icon1" type="radio" checked id="1"/>
+                  <span><img class="activator" src="../../static/img/travapotami6.png" width=30%></span>
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input name="icon2" type="radio" id="2"/>
+                  <span><img class="activator" src="../../static/img/potami3.png" width=15%></span>
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input name="icon3" type="radio" id="3"/>
+                  <span><img class="activator" src="../../static/img/potami2.jpg" width=15%></span>
+                </label>
+              </p>
+
             <div class="input-field col s12">
                 <textarea id="group-description" name="group-description" class="materialize-textarea" class="validate" required></textarea>
                 <label for="group-description">Group Description</label>
@@ -41,15 +61,19 @@
             <button class="btn waves-effect waves-light" type="submit">Create Group
                 <i class="material-icons right">send</i>
             </button>
+            
         </form>
-
+        <br>
     </div>
+    <br>
 </div>
 
 <script>
      function removeMem(button) {
          $(button).parent().remove()
      }
+
+
 
     $(document).ready(function() {
         var inputs = 1;
@@ -66,6 +90,10 @@
                 </div>`);
         });
 
+    });
+
+    $(document).ready(function(){
+        $('select').formSelect();
     });
 
 </script>
