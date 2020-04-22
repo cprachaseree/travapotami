@@ -36,7 +36,10 @@
         </tr>
         <tr>
             <th>
-                Hosts <a class="btn-small" href="{{ url_for('trips_blueprint.add_host', tripid=trip.id) }}">Add</a>
+                Hosts 
+                {%if user is in trip.hosts%}
+                <a class="btn-small" href="{{ url_for('trips_blueprint.add_host', tripid=trip.id) }}">Add</a>
+                {%endif%}
             </th>
             <td>
                 <table>
@@ -61,7 +64,10 @@
         
             <tr>
                 <th>
-                    Participants <a class="btn-small" href="{{ url_for('trips_blueprint.add_participant', tripid=trip.id) }}">Add</a>
+                    Participants 
+                    {%if user is in trip.hosts%}
+                    <a class="btn-small" href="{{ url_for('trips_blueprint.add_participant', tripid=trip.id) }}">Add</a>
+                    {%endif%}
                 </th>
                 {%if trip.participants%}
                 <td>
