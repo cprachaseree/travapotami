@@ -91,6 +91,7 @@ class Rating(db.Model):
 class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+    group_name = db.Column(db.String(64), nullable=False)
     # accessibility is public or private
     public = db.Column(db.Boolean)
     admins = db.relationship('User', secondary=group_admin)

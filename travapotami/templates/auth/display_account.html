@@ -58,15 +58,15 @@
         </table>
         <br>
         {% if is_current %}
-        
+
         <div class="container">
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="{{  url_for('auth_blueprint.edit_account')  }}">Edit Account</a>
-                <i class="material-icons right">send</i>
+                <i class="material-icons right">edit</i>
             </div>
             <div class="btn waves-effect waves-light">
                 <a style="color:white" href="{{  url_for('auth_blueprint.update_photo')  }}">Upload New Photo</a>
-                <i class="material-icons right">send</i>
+                <i class="material-icons right">insert_photo</i>
             </div>
         </div>
         <br>
@@ -79,6 +79,6 @@
         <br>
         {% endif %}
     </div>
-    
+
 </div>
 {% endblock content %}

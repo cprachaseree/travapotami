@@ -37,12 +37,17 @@
             <th>Trip Type</th>
             <td>{{result['trip_type']}}</td>
         </tr>
-
-
-
     </table>
     <br>
+    {%if result['user'] is in result['hostusername']%}
+
+                <a href="{{url_for('trips_blueprint.edit_trip',tripid=result['tripid'])}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
+
+    {%endif%}
     <br>
+    <br>
+    <br>
+
 </div>
 
 

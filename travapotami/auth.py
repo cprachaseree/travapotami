@@ -115,9 +115,7 @@ def new_password(username):
         return redirect(url_for('auth_blueprint.login'))
     return render_template('./auth/new_password.html', title='New Password', form=form)
 
-# Edit usr information
-
-
+# Edit user information
 @auth_blueprint.route('/edit_account', methods=['GET', 'POST'])
 @login_required
 def edit_account():

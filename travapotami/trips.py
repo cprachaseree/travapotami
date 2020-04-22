@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, request, url_for
 from flask_login import current_user
-from .forms import TripForm, SearchTripsForm
+from .forms import TripForm, SearchTripsForm, UpdateTrip
 from datetime import date, datetime, timedelta
 from .models import db, Trip
 import pycountry
@@ -29,6 +29,13 @@ def create_trip():
         d0 = date(int(start_year), int(start_month), int(start_day))
         d1 = date(int(end_year), int(end_month), int(end_day))
         delta = d1 - d0
+        trip_types = ""
+        for i, trip_type in enumerate(form.triptype.data):
+            if i != len(form.triptype.data) - 1:
+                trip_types = trip_types + trip_type + ", "
+            else:
+                trip_types = trip_types + trip_type
+        
         trip = Trip(hosts=[current_user],
                     destination=form.destination.data,
                     budget_max=form.max_budget.data,
@@ -38,7 +45,7 @@ def create_trip():
                     # date_from=datetime.combine(form.datebegin.data, time()),
                     # date_to=datetime.combine(form.dateend.data, time()),
                     length=timedelta(days=delta.days),
-                    trip_type=form.triptype.data
+                    trip_type=trip_types
                     )
         result = request.form
         db.session.add(trip)
@@ -85,9 +92,12 @@ def display_trip(tripid):
     new['tripid'] = trip.id
     if trip.hosts:
         hosts = []
+        hostusername = []
         for x in trip.hosts:
             hosts.append(x.first_name + " " + x.last_name)  # i.hosts is a list
+            hostusername.append(x.username)
         new['hosts'] = hosts
+        new['hostusername'] = hostusername
     country = pycountry.countries.get(alpha_2=trip.destination)  # append as country.name
     new['destination'] = country.name
     if trip.participants:
@@ -98,15 +108,32 @@ def display_trip(tripid):
     new['length'] = trip.length  # in days
     new['trip_type'] = trip.trip_type
     new['imagecode'] = str(trip.destination).lower()
+    new['user'] = current_user.username
     return render_template('./trips/display_trip.html', title="Your trip", result=new)
 
 
-@trips_blueprint.route('/join_trip', methods=['GET', 'POST'])
-def join_trips():
-    return render_template('./trips/choose_trip.html', title='Choose Trip')
-
-# def edit_trip():
-#     return render_template('./trips/edit_trip.html', title='Edit Trip')
+@trips_blueprint.route('/edit_trip/<int:tripid>', methods=['GET', 'POST'])
+def edit_trip(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    form = UpdateTrip()
+    if form.validate_on_submit():
+        trip.destination = form.destination.data
+        trip.description = form.description.data
+        trip.date_from = form.datebegin.data
+        trip.date_to = form.dateend.data
+        trip.budget_max = form.max_budget.data
+        trip.trip_type = form.triptype.data
+        db.session.commit()
+        flash('Your trip has been updated!')
+        return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
+    elif request.method == 'GET':
+        form.destination.data = trip.destination
+        form.description.data = trip.description
+        form.datebegin.data = trip.date_from
+        form.dateend.data = trip.date_to
+        form.max_budget.data = trip.budget_max
+        form.destination.data = trip.trip_type
+    return render_template('./trips/edit_trip.html', title='Edit Trip', form=form)
 
 
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])

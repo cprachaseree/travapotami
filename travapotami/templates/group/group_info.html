@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <h1>About Group {{ group.group_name }}</h1>
+    <div class="container">
+        <br>
+        <p>Group Details</p>
+        <table class="responsive-table">
+            <tr>
+                <th>Number of Members</th>
+                <td>{{ group.mates|length+1 }}</td>
+            </tr>
+            <tr>
+                <th>Admin</th>
+                <td>{{ group.admins[0].username }}</td>
+            </tr>
+            <tr>
+                <th>Mates</th>
+                <td>
+                    {%for i in range(0, group.mates|length)%}
+                    {{ group.mates[i].username }}
+                    {{ "&nbsp;"|safe*5 }}
+                    {%endfor%}
+                </td>
+            </tr>
+        </table>
+    
+        <br>
+        <p>To add new member(s), please press edit group.</p>
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('group_blueprint.edit_group', group=group)  }}">Edit Group Details</a>
+            <i class="material-icons right">edit</i>
+        </div>
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('group_blueprint.leave_group', group=group)  }}">Leave Group</a>
+            <i class="material-icons right">exit_to_app</i>
+        </div>
+    </div>
+
+
+    
+</div>
+
+
+
+
+{% endblock content %}

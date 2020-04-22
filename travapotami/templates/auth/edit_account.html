@@ -26,13 +26,12 @@
                 </div>
             </div>
             
-            
             <div class="btn waves-effect waves-light">
                 {{form.submit()}}
                 <i class="material-icons right">send</i>
             </div>
             <div class="btn waves-effect waves-light">
-                <a style="color: black"
+                <a style="color:black"
                     href="{{  url_for('auth_blueprint.display_account', username=current_user.username)  }}">Cancel
                     <i style="color: white" class="material-icons right">cancel</i>
                 </a>

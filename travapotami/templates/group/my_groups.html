@@ -2,40 +2,22 @@
 {% block content %}
 
 <div class="container">
-    <h3>Check out all your past, current and upcoming trips.</h3>
+    <br>
+    <h1> {{ current_user.username }}'s Groups</h1>
+    <h3>Take a look at all the groups you are in!</h3>
+    <p>Click on the <i class="material-icons tiny">info_outline</i> button for more description.</p>
     <ul class="collection">
-        <li class="collection-item avatar">
-        <img src="../../static/img/492683.jpg" alt="" class="circle">
-        <span class="title">Trip Name</span>
-        <p>Group Name<br>
-            Date
-        </p>
-        <a href="#!" class="secondary-content"><i class="material-icons">info_outline</i></a>
-        </li>
-        <li class="collection-item avatar">
-        <i class="material-icons circle teal">beach_access</i>
-        <span class="title">Trip Name</span>
-        <p>Group Name<br>
-            Date
-        </p>
-        <a href="#!" class="secondary-content"><i class="material-icons">info_outline</i></a>
-        </li>
-        <li class="collection-item avatar">
-        <i class="material-icons circle teal">face</i>
-        <span class="title">Trip Name</span>
-        <p>Group Name<br>
-            Date
-        </p>
-        <a href="#!" class="secondary-content"><i class="material-icons">info_outline</i></a>
-        </li>
-        <li class="collection-item avatar">
-        <i class="material-icons circle teal">play_arrow</i>
-        <span class="title">Trip Name</span>
-        <p>Group Name<br>
-            Date
-        </p>
-        <a href="#!" class="secondary-content"><i class="material-icons">info_outline</i></a>
-        </li>
+        {% for i in range(0, result|length) %}
+            <li class="collection-item avatar">
+            <i class="material-icons circle teal">face</i>
+            <span class="title">{{ result[i].group_name }}</span>
+            <p>Group Description<br>
+                Number of Members: {{ result[i].mates|length+1 }} 
+            </p>
+            <a href="{{  url_for('group_blueprint.group_info', group=result[i])  }}" class="secondary-content"><i class="material-icons">info_outline</i></a>
+            </li>
+        {%endfor%}
+        
     </ul>
 </div>
 {% endblock content %}

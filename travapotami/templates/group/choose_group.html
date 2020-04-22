@@ -13,14 +13,18 @@
         <br>
         <br>
         <div class="row">
-            <a href="{{  url_for('group_blueprint.create_group')  }}" class="col s4 btn-large tooltipped" data-position="bottom" >Create a New Group</a>
-            <a href="{{  url_for('group_blueprint.browse_groups')  }}" class="col s4 btn-large tooltipped" data-position="bottom">Browse Groups</a>
-            <a href="{{  url_for('group_blueprint.my_groups')  }}" class="col s4 btn-large tooltipped" data-position="bottom">My Groups</a>
+            <a href="{{  url_for('group_blueprint.create_group')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Open a new group and invite your friends over!">Create a New Group</a>
+            <a href="{{  url_for('group_blueprint.browse_groups')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Search for groups you are interested in!">Browse Groups</a>
+            <a href="{{  url_for('group_blueprint.my_groups')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Take a look at your current groups!">My Groups</a>
         </div>
-
 
     </div>
 </div>
 
+<script>
+    $(document).ready(function(){
+    $('.tooltipped').tooltip();
+  });
+</script>
 {% endblock content %}
 

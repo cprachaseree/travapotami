@@ -14,7 +14,7 @@
                     </div>
                     <div class="card-content">
                     <span class="card-title activator grey-text text-darken-4">{{trip['destination']}}<i class="material-icons right">more_vert</i></span>
-                    <p><a href="{{url_for('trips_blueprint.display_trip', tripid=trip['tripid'])}}">Check out yout trip to {{trip['destination']}} on {{trip['date_from']}}</a></p>
+                    <p><a href="{{url_for('trips_blueprint.display_trip', tripid=trip['tripid'])}}">Check out your trip to {{trip['destination']}} on {{trip['date_from']}}</a></p>
                     </div>
                     <div class="card-reveal teal lighten-5">
                     <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
@@ -36,8 +36,11 @@
     {%endif%}
 
     {%if not result%}
+    <div >
+    <br>
         <h2>You don't have any trips yet! Do you want to join one now?</h2>
-            <a href="{{  url_for('trips_blueprint.join_trip')  }}" class="col s4 btn-large tooltipped" data-position="bottom" data-tooltip="Search for trips!">Join a Trip</a>
+            <a href="{{  url_for('trips_blueprint.search_trips')  }}" class="col s4 btn-large" style="center" data-position="bottom" data-tooltip="Search for trips!">Join a Trip</a>
+    </div>
     {%endif%}
 
 </div>
