@@ -29,6 +29,13 @@ def create_trip():
         d0 = date(int(start_year), int(start_month), int(start_day))
         d1 = date(int(end_year), int(end_month), int(end_day))
         delta = d1 - d0
+        trip_types = ""
+        for i, trip_type in enumerate(form.triptype.data):
+            if i != len(form.triptype.data) - 1:
+                trip_types = trip_types + trip_type + ", "
+            else:
+                trip_types = trip_types + trip_type
+        
         trip = Trip(hosts=[current_user],
                     destination=form.destination.data,
                     budget_max=form.max_budget.data,
@@ -38,7 +45,7 @@ def create_trip():
                     # date_from=datetime.combine(form.datebegin.data, time()),
                     # date_to=datetime.combine(form.dateend.data, time()),
                     length=timedelta(days=delta.days),
-                    trip_type=form.triptype.data
+                    trip_type=trip_types
                     )
         result = request.form
         db.session.add(trip)
