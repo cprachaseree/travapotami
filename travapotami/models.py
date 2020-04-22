@@ -106,7 +106,7 @@ class Trip(db.Model):
     participants = db.relationship('User', secondary=trip_participant)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))  # will exist if the trip is created by a group
     destination = db.Column(db.String(64), nullable=False)  # can implemente some kind of google maps api to have a enumeration-like list?
-    budget_min = db.Column(db.Float)
+    #budget_min = db.Column(db.Float)
     budget_max = db.Column(db.Float, nullable=False)
     date_from = db.Column(db.Date, nullable=False)
     date_to = db.Column(db.Date, nullable=False)

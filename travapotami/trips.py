@@ -1,11 +1,21 @@
-from flask import Blueprint, render_template, flash, redirect, request, url_for
+from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app
 from flask_login import current_user
 from .forms import TripForm, SearchTripsForm, UpdateTrip
 from datetime import date, datetime, timedelta
 from .models import db, Trip
 import pycountry
+import sys
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
 
+def list_to_string(input):
+    if input is None:
+        return None
+    st = ""
+    for i, trip_type in enumerate(input):
+        if i != len(input) - 1:
+            st = st + trip_type + ", "
+        else:
+            st = st + trip_type
 
 @trips_blueprint.route('/choose_trip')
 def choose_trip():
@@ -29,13 +39,8 @@ def create_trip():
         d0 = date(int(start_year), int(start_month), int(start_day))
         d1 = date(int(end_year), int(end_month), int(end_day))
         delta = d1 - d0
-        trip_types = ""
-        for i, trip_type in enumerate(form.triptype.data):
-            if i != len(form.triptype.data) - 1:
-                trip_types = trip_types + trip_type + ", "
-            else:
-                trip_types = trip_types + trip_type
-
+        trip_types = list_to_string(form.triptype.data)
+        
         trip = Trip(hosts=[current_user],
                     destination=form.destination.data,
                     budget_max=form.max_budget.data,
@@ -140,7 +145,30 @@ def edit_trip(tripid):
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
     form = SearchTripsForm()
+    result = None
+    trip_types = list_to_string(form.triptype.data)
     if form.validate_on_submit():
-        db.session
+        if form.max_budget.data and form.triptype.data:
+            result = Trip.query.filter(
+                Trip.destination == form.destination.data,
+                Trip.budget_max <= form.max_budget.data,
+                Trip.trip_type.like(trip_types)
+            )
+        elif form.max_budget.data:
+            result = Trip.query.filter(
+                Trip.destination == form.destination.data,
+                Trip.budget_max <= form.max_budget.data
+            )
+        elif form.triptype.data:
+            result = Trip.query.filter(
+                Trip.destination == form.destination.data,
+                Trip.trip_type.like(trip_types)
+            )
+        else:
+            result = Trip.query.filter(
+                Trip.destination == form.destination.data
+            )
+        flash(repr(result))
 
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
+
