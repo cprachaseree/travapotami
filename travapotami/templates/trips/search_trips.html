@@ -2,7 +2,7 @@
 {% block content %}
 <div class="content-section">
     <div class="container">
-        <h2>Create Your Trip</h2>
+        <h2>Join a Trip</h2>
         <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {% for field in form %}
@@ -16,7 +16,7 @@
             {% endfor %}
             <div class="btn waves-effect waves-light">
                 {{ form.submit() }}
-                <i class="material-icons right">send</i>
+                <i class="material-icons right">Search</i>
             </div>
         </form>
         <br>

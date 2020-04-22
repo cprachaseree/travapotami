@@ -1,5 +1,5 @@
 from base64 import b64encode
-from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings
+from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings, NewPassword
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -7,6 +7,8 @@ from . import bcrypt, login_manager
 from .models import db, User
 
 # Registration page
+
+
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -40,9 +42,9 @@ def register():
                         gender          = form.gender.data,
                         passport_number = form.passport_number.data,
                         birthday        = form.birthday.data,
-                        photo           = data
+                        photo           = data,
+                        is_web_admin    = False
             )
-            #return render_template('./auth/register.html', title='Register', form=form)
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
@@ -53,6 +55,8 @@ def register():
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
+
+
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -66,9 +70,14 @@ def login():
             return redirect(url_for('main_blueprint.home'))
         else:
             flash("Incorrect username or password. Please try again.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
     return render_template('./auth/login.html', title='Login', form=form)
 
 # Logout
+
+
 @auth_blueprint.route('/logout')
 @login_required
 def logout():
@@ -77,12 +86,34 @@ def logout():
     return redirect(url_for('main_blueprint.home'))
 
 # Forget Password
-@auth_blueprint.route('/forgetpassword',  methods=['GET', 'POST'])
+
+
+@auth_blueprint.route('/forgetpassword', methods=['GET', 'POST'])
 def forgetpassword():
     form = ForgotPasswordForm()
-    if request.method == 'POST':
-        flash("SUCCESS")
-    return render_template('./auth/forgetpassword.html', title='Forget Password', form=form)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data, passport_number=form.passport_number.data).first()
+        if user:
+            flash("Redirected to change password form.")
+            return redirect(url_for('auth_blueprint.new_password', username=user.username))
+        else:
+            flash("No user exists with given email and passport number.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
+    return render_template('./auth/forgot_password.html', title='Forget Password', form=form)
+
+
+@auth_blueprint.route('/new_password/<string:username>',  methods=['GET', 'POST'])
+def new_password(username):
+    form = NewPassword()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        flash("Password resetted! Redirected to login.")
+        return redirect(url_for('auth_blueprint.login'))
+    return render_template('./auth/new_password.html', title='New Password', form=form)
 
 # Edit user information
 @auth_blueprint.route('/edit_account', methods=['GET', 'POST'])
@@ -113,6 +144,9 @@ def edit_account():
         form.gender.data = current_user.gender
         form.passport_number.data = current_user.passport_number
         form.birthday.data = current_user.birthday
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(e[0])
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
 
 
@@ -130,9 +164,11 @@ def update_photo():
         flash("Picture updated.")
         image = b64encode(current_user.photo).decode("utf-8")
         return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=current_user.username, is_current=True, image=image))
-    return render_template('./auth/update_photo.html', title="Update Photo",  form=form, image=image)
+    return render_template('./auth/update_photo.html', title="Update Photo", form=form, image=image)
 
 # display user
+
+
 @auth_blueprint.route('/user/<string:username>', methods=['GET'])
 def display_account(username):
     user = User.query.filter_by(username=username).first()
@@ -142,8 +178,8 @@ def display_account(username):
     image = None
     if user.photo:
         image = b64encode(user.photo).decode("utf-8")
-    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image)
-
+    gender = str(user.gender)
+    return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image, gender=gender)
 
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])
 def search_users():
@@ -171,7 +207,7 @@ def rate_user(username):
         if user == current_user:
             flash("Cannot rate yourself.")
             is_current = True
-        
+
         number_of_votes = float(user.rating.number_of_votes)
         friendliness = float(user.rating.friendliness)
         cleanliness = float(user.rating.cleanliness)
@@ -181,17 +217,17 @@ def rate_user(username):
         cleanliness = (cleanliness * number_of_votes + float(form.cleanliness.data)) / (number_of_votes + 1)
         timeliness = (timeliness * number_of_votes + float(form.timeliness.data)) / (number_of_votes + 1)
         foodies = (foodies * number_of_votes + float(form.foodies.data)) / (number_of_votes + 1)
-        
+
         user.rating.friendliness = friendliness
         user.rating.cleanliness = cleanliness
         user.rating.timeliness = timeliness
         user.rating.foodies = foodies
         user.rating.number_of_votes = number_of_votes + 1
         db.session.commit()
-        
+
         flash(f"Ratings given to {username}")
         image = user.photo
-        
+
         return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=username, is_current=is_current, image=image))
-    
+
     return render_template('./auth/update_ratings.html', title="Rate User", form=form, username=username)

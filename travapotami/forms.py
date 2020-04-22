@@ -1,341 +1,148 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, PasswordField
+from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField, TextAreaField, SelectMultipleField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flask import current_app, g
 from flask.cli import with_appcontext
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
+countires = [('AW', 'Aruba'), ('AF', 'Afghanistan'), ('AO', 'Angola'), ('AI', 'Anguilla'), ('AX', 'Åland Islands'), ('AL', 'Albania'), ('AD', 'Andorra'), ('AE', 'United Arab Emirates'), ('AR', 'Argentina'), ('AM', 'Armenia'), ('AS', 'American Samoa'), ('AQ', 'Antarctica'), ('TF', 'French Southern Territories'), ('AG', 'Antigua and Barbuda'), ('AU', 'Australia'), ('AT', 'Austria'), ('AZ', 'Azerbaijan'), ('BI', 'Burundi'), ('BE', 'Belgium'), ('BJ', 'Benin'), ('BQ', 'Bonaire, Sint Eustatius and Saba'), ('BF', 'Burkina Faso'), ('BD', 'Bangladesh'), ('BG', 'Bulgaria'), ('BH', 'Bahrain'), ('BS', 'Bahamas'), ('BA', 'Bosnia and Herzegovina'), ('BL', 'Saint Barthélemy'), ('BY', 'Belarus'), ('BZ', 'Belize'), ('BM', 'Bermuda'), ('BO', 'Bolivia, Plurinational State of'), ('BR', 'Brazil'), ('BB', 'Barbados'), ('BN', 'Brunei Darussalam'), ('BT', 'Bhutan'), ('BV', 'Bouvet Island'), ('BW', 'Botswana'), ('CF', 'Central African Republic'), ('CA', 'Canada'), ('CC', 'Cocos (Keeling) Islands'), ('CH', 'Switzerland'), ('CL', 'Chile'), ('CN', 'China'), ('CI', "Côte d'Ivoire"), ('CM', 'Cameroon'), ('CD', 'Congo, The Democratic Republic of the'), ('CG', 'Congo'), ('CK', 'Cook Islands'), ('CO', 'Colombia'), ('KM', 'Comoros'), ('CV', 'Cabo Verde'), ('CR', 'Costa Rica'), ('CU', 'Cuba'), ('CW', 'Curaçao'), ('CX', 'Christmas Island'), ('KY', 'Cayman Islands'), ('CY', 'Cyprus'), ('CZ', 'Czechia'), ('DE', 'Germany'), ('DJ', 'Djibouti'), ('DM', 'Dominica'), ('DK', 'Denmark'), ('DO', 'Dominican Republic'), ('DZ', 'Algeria'), ('EC', 'Ecuador'), ('EG', 'Egypt'), ('ER', 'Eritrea'), ('EH', 'Western Sahara'), ('ES', 'Spain'), ('EE', 'Estonia'), ('ET', 'Ethiopia'), ('FI', 'Finland'), ('FJ', 'Fiji'), ('FK', 'Falkland Islands (Malvinas)'), ('FR', 'France'), ('FO', 'Faroe Islands'), ('FM', 'Micronesia, Federated States of'), ('GA', 'Gabon'), ('GB', 'United Kingdom'), ('GE', 'Georgia'), ('GG', 'Guernsey'), ('GH', 'Ghana'), ('GI', 'Gibraltar'), ('GN', 'Guinea'), ('GP', 'Guadeloupe'), ('GM', 'Gambia'), ('GW', 'Guinea-Bissau'), ('GQ', 'Equatorial Guinea'), ('GR', 'Greece'), ('GD', 'Grenada'), ('GL', 'Greenland'), ('GT', 'Guatemala'), ('GF', 'French Guiana'), ('GU', 'Guam'), ('GY', 'Guyana'), ('HK', 'Hong Kong'), ('HM', 'Heard Island and McDonald Islands'), ('HN', 'Honduras'), ('HR', 'Croatia'), ('HT', 'Haiti'), ('HU', 'Hungary'), ('ID', 'Indonesia'), ('IM', 'Isle of Man'), ('IN', 'India'), ('IO', 'British Indian Ocean Territory'), ('IE', 'Ireland'), ('IR', 'Iran, Islamic Republic of'), ('IQ', 'Iraq'), ('IS', 'Iceland'), ('IL', 'Israel'), ('IT', 'Italy'), ('JM', 'Jamaica'), ('JE', 'Jersey'), ('JO', 'Jordan'), ('JP', 'Japan'), ('KZ', 'Kazakhstan'), ('KE', 'Kenya'), ('KG', 'Kyrgyzstan'), ('KH', 'Cambodia'), ('KI', 'Kiribati'), ('KN', 'Saint Kitts and Nevis'), ('KR', 'Korea, Republic of'), ('KW', 'Kuwait'), ('LA', "Lao People's Democratic Republic"), ('LB', 'Lebanon'), ('LR', 'Liberia'), ('LY', 'Libya'), ('LC', 'Saint Lucia'), ('LI', 'Liechtenstein'), ('LK', 'Sri Lanka'), ('LS', 'Lesotho'), ('LT', 'Lithuania'), ('LU', 'Luxembourg'), ('LV', 'Latvia'), ('MO', 'Macao'), ('MF', 'Saint Martin (French part)'), ('MA', 'Morocco'), ('MC', 'Monaco'), ('MD', 'Moldova, Republic of'), ('MG', 'Madagascar'), ('MV', 'Maldives'), ('MX', 'Mexico'), ('MH', 'Marshall Islands'), ('MK', 'North Macedonia'), ('ML', 'Mali'), ('MT', 'Malta'), ('MM', 'Myanmar'), ('ME', 'Montenegro'), ('MN', 'Mongolia'), ('MP', 'Northern Mariana Islands'), ('MZ', 'Mozambique'), ('MR', 'Mauritania'), ('MS', 'Montserrat'), ('MQ', 'Martinique'), ('MU', 'Mauritius'), ('MW', 'Malawi'), ('MY', 'Malaysia'), ('YT', 'Mayotte'), ('NA', 'Namibia'), ('NC', 'New Caledonia'), ('NE', 'Niger'), ('NF', 'Norfolk Island'), ('NG', 'Nigeria'), ('NI', 'Nicaragua'), ('NU', 'Niue'), ('NL', 'Netherlands'), ('NO', 'Norway'), ('NP', 'Nepal'), ('NR', 'Nauru'), ('NZ', 'New Zealand'), ('OM', 'Oman'), ('PK', 'Pakistan'), ('PA', 'Panama'), ('PN', 'Pitcairn'), ('PE', 'Peru'), ('PH', 'Philippines'), ('PW', 'Palau'), ('PG', 'Papua New Guinea'), ('PL', 'Poland'), ('PR', 'Puerto Rico'), ('KP', "Korea, Democratic People's Republic of"), ('PT', 'Portugal'), ('PY', 'Paraguay'), ('PS', 'Palestine, State of'), ('PF', 'French Polynesia'), ('QA', 'Qatar'), ('RE', 'Réunion'), ('RO', 'Romania'), ('RU', 'Russian Federation'), ('RW', 'Rwanda'), ('SA', 'Saudi Arabia'), ('SD', 'Sudan'), ('SN', 'Senegal'), ('SG', 'Singapore'), ('GS', 'South Georgia and the South Sandwich Islands'), ('SH', 'Saint Helena, Ascension and Tristan da Cunha'), ('SJ', 'Svalbard and Jan Mayen'), ('SB', 'Solomon Islands'), ('SL', 'Sierra Leone'), ('SV', 'El Salvador'), ('SM', 'San Marino'), ('SO', 'Somalia'), ('PM', 'Saint Pierre and Miquelon'), ('RS', 'Serbia'), ('SS', 'South Sudan'), ('ST', 'Sao Tome and Principe'), ('SR', 'Suriname'), ('SK', 'Slovakia'), ('SI', 'Slovenia'), ('SE', 'Sweden'), ('SZ', 'Eswatini'), ('SX', 'Sint Maarten (Dutch part)'), ('SC', 'Seychelles'), ('SY', 'Syrian Arab Republic'), ('TC', 'Turks and Caicos Islands'), ('TD', 'Chad'), ('TG', 'Togo'), ('TH', 'Thailand'), ('TJ', 'Tajikistan'), ('TK', 'Tokelau'), ('TM', 'Turkmenistan'), ('TL', 'Timor-Leste'), ('TO', 'Tonga'), ('TT', 'Trinidad and Tobago'), ('TN', 'Tunisia'), ('TR', 'Turkey'), ('TV', 'Tuvalu'), ('TW', 'Taiwan, Province of China'), ('TZ', 'Tanzania, United Republic of'), ('UG', 'Uganda'), ('UA', 'Ukraine'), ('UM', 'United States Minor Outlying Islands'), ('UY', 'Uruguay'), ('US', 'United States'), ('UZ', 'Uzbekistan'), ('VA', 'Holy See (Vatican City State)'), ('VC', 'Saint Vincent and the Grenadines'), ('VE', 'Venezuela, Bolivarian Republic of'), ('VG', 'Virgin Islands, British'), ('VI', 'Virgin Islands, U.S.'), ('VN', 'Viet Nam'), ('VU', 'Vanuatu'), ('WF', 'Wallis and Futuna'), ('WS', 'Samoa'), ('YE', 'Yemen'), ('ZA', 'South Africa'), ('ZM', 'Zambia'), ('ZW', 'Zimbabwe')]
+
+trip_type = [('Relaxing', 'Relaxing'),
+             ('Adventurous', 'Adventurous'),
+             ('Foodies', 'Foodies'),
+             ('Fast-paced', 'Fast-paced'),
+             ('Slow-life', 'Slow-life')]
+
 
 class TripForm(FlaskForm):
 
-       tripname = StringField('Trip Name',
-                              validators=[DataRequired(), Length(min=2, max=40)])
-       destination = SelectField('Destination', choices=[('AF', 'AFGHANISTAN'),
-                                                         ('AL', 'ALBANIA'),
-                                                         ('DZ', 'ALGERIA'),
-                                                         ('AS', 'AMERICAN SAMOA'),
-                                                         ('AD', 'ANDORRA'),
-                                                         ('AO', 'ANGOLA'),
-                                                         ('AI', 'ANGUILLA'),
-                                                         ('AQ', 'ANTARCTICA'),
-                                                         ('AG', 'ANTIGUA AND BARBUDA'),
-                                                         ('AR', 'ARGENTINA'),
-                                                         ('AM', 'ARMENIA'),
-                                                         ('AW', 'ARUBA'),
-                                                         ('AU', 'AUSTRALIA'),
-                                                         ('AT', 'AUSTRIA'),
-                                                         ('AZ', 'AZERBAIJAN'),
-                                                         ('BS', 'BAHAMAS'), ('BH', 'BAHRAIN'),
-                                                         ('BD', 'BANGLADESH'),
-                                                         ('BB', 'BARBADOS'),
-                                                         ('BY', 'BELARUS'),
-                                                         ('BE', 'BELGIUM'),
-                                                         ('BZ', 'BELIZE'),
-                                                         ('BJ', 'BENIN'),
-                                                         ('BM', 'BERMUDA'),
-                                                         ('BT', 'BHUTAN'),
-                                                         ('BO', 'BOLIVIA'),
-                                                         ('BA', 'BOSNIA AND HERZEGOVINA'),
-                                                         ('BW', 'BOTSWANA'),
-                                                         ('BV', 'BOUVET ISLAND'),
-                                                         ('BR', 'BRAZIL'),
-                                                         ('IO', 'BRITISH INDIAN OCEAN TERRITORY'),
-                                                         ('BN', 'BRUNEI DARUSSALAM'),
-                                                         ('BG', 'BULGARIA'),
-                                                         ('BF', 'BURKINA FASO'),
-                                                         ('BI', 'BURUNDI'),
-                                                         ('KH', 'CAMBODIA'),
-                                                         ('CM', 'CAMEROON'),
-                                                         ('CA', 'CANADA'),
-                                                         ('CV', 'CAPE VERDE'),
-                                                         ('KY', 'CAYMAN ISLANDS'),
-                                                         ('CF', 'CENTRAL AFRICAN REPUBLIC'),
-                                                         ('TD', 'CHAD'),
-                                                         ('CL', 'CHILE'),
-                                                         ('CN', 'CHINA'),
-                                                         ('CX', 'CHRISTMAS ISLAND'),
-                                                         ('CC', 'COCOS (KEELING) ISLANDS'),
-                                                         ('CO', 'COLOMBIA'), ('KM', 'COMOROS'),
-                                                         ('CG', 'CONGO'),
-                                                         ('CD', 'CONGO, THE DEMOCRATIC REPUBLIC OF'),
-                                                         ('CK', 'COOK ISLANDS'),
-                                                         ('CR', 'COSTA RICA'),
-                                                         ('HR', 'CROATIA'),
-                                                         ('CU', 'CUBA'),
-                                                         ('CY', 'CYPRUS'),
-                                                         ('CZ', 'CZECH REPUBLIC'),
-                                                         ('DK', 'DENMARK'),
-                                                         ('DJ', 'DJIBOUTI'),
-                                                         ('DM', 'DOMINICA'),
-                                                         ('DO', 'DOMINICAN REPUBLIC'),
-                                                         ('EC', 'ECUADOR'),
-                                                         ('EG', 'EGYPT'),
-                                                         ('SV', 'EL SALVADOR'),
-                                                         ('GQ', 'EQUATORIAL GUINEA'),
-                                                         ('ER', 'ERITREA'),
-                                                         ('EE', 'ESTONIA'),
-                                                         ('ET', 'ETHIOPIA'),
-                                                         ('FK', 'FALKLAND ISLANDS (MALVINAS)'),
-                                                         ('FO', 'FAROE ISLANDS'),
-                                                         ('FJ', 'FIJI'),
-                                                         ('FI', 'FINLAND'),
-                                                         ('FR', 'FRANCE'),
-                                                         ('GF', 'FRENCH GUIANA'),
-                                                         ('PF', 'FRENCH POLYNESIA'),
-                                                         ('TF', 'FRENCH SOUTHERN TERRITORIES'),
-                                                         ('GA', 'GABON'),
-                                                         ('GM', 'GAMBIA'),
-                                                         ('GE', 'GEORGIA'),
-                                                         ('DE', 'GERMANY'),
-                                                         ('GH', 'GHANA'),
-                                                         ('GI', 'GIBRALTAR'),
-                                                         ('GR', 'GREECE'),
-                                                         ('GL', 'GREENLAND'),
-                                                         ('GD', 'GRENADA'),
-                                                         ('GP', 'GUADELOUPE'),
-                                                         ('GU', 'GUAM'),
-                                                         ('GT', 'GUATEMALA'),
-                                                         ('GN', 'GUINEA'),
-                                                         ('GW', 'GUINEA'),
-                                                         ('GY', 'GUYANA'),
-                                                         ('HT', 'HAITI'),
-                                                         ('HM', 'HEARD ISLAND AND MCDONALD ISLANDS'),
-                                                         ('HN', 'HONDURAS'),
-                                                         ('HK', 'HONG KONG'),
-                                                         ('HU', 'HUNGARY'),
-                                                         ('IS', 'ICELAND'),
-                                                         ('IN', 'INDIA'),
-                                                         ('ID', 'INDONESIA'),
-                                                         ('IR', 'IRAN, ISLAMIC REPUBLIC OF'),
-                                                         ('IQ', 'IRAQ'),
-                                                         ('IE', 'IRELAND'),
-                                                         ('IL', 'ISRAEL'),
-                                                         ('IT', 'ITALY'),
-                                                         ('JM', 'JAMAICA'),
-                                                         ('JP', 'JAPAN'),
-                                                         ('JO', 'JORDAN'),
-                                                         ('KZ', 'KAZAKHSTAN'),
-                                                         ('KE', 'KENYA'),
-                                                         ('KI', 'KIRIBATI'),
-                                                         ('KP', "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"),
-                                                         ('KR', 'KOREA, REPUBLIC OF'),
-                                                         ('KW', 'KUWAIT'),
-                                                         ('KG', 'KYRGYZSTAN'),
-                                                         ('LA', "LAO PEOPLE'S DEMOCRATIC REPUBLIC"),
-                                                         ('LV', 'LATVIA'),
-                                                         ('LB', 'LEBANON'),
-                                                         ('LS', 'LESOTHO'),
-                                                         ('LR', 'LIBERIA'),
-                                                         ('LY', 'LIBYAN ARAB JAMAHIRIYA'),
-                                                         ('LI', 'LIECHTENSTEIN'),
-                                                         ('LT', 'LITHUANIA'),
-                                                         ('LU', 'LUXEMBOURG'),
-                                                         ('MO', 'MACAO'),
-                                                         ('MK', 'MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF'),
-                                                         ('MG', 'MADAGASCAR'),
-                                                         ('MW', 'MALAWI'),
-                                                         ('MY', 'MALAYSIA'),
-                                                         ('MV', 'MALDIVES'),
-                                                         ('ML', 'MALI'),
-                                                         ('MT', 'MALTA'),
-                                                         ('MH', 'MARSHALL ISLANDS'),
-                                                         ('MQ', 'MARTINIQUE'),
-                                                         ('MR', 'MAURITANIA'),
-                                                         ('MU', 'MAURITIUS'),
-                                                         ('YT', 'MAYOTTE'),
-                                                         ('MX', 'MEXICO'),
-                                                         ('FM', 'MICRONESIA, FEDERATED STATES OF'),
-                                                         ('MD', 'MOLDOVA, REPUBLIC OF'),
-                                                         ('MC', 'MONACO'),
-                                                         ('MN', 'MONGOLIA'),
-                                                         ('MS', 'MONTSERRAT'),
-                                                         ('MA', 'MOROCCO'),
-                                                         ('MZ', 'MOZAMBIQUE'),
-                                                         ('MM', 'MYANMAR'),
-                                                         ('NA', 'NAMIBIA'),
-                                                         ('NR', 'NAURU'),
-                                                         ('NP', 'NEPAL'),
-                                                         ('NL', 'NETHERLANDS'),
-                                                         ('AN', 'NETHERLANDS ANTILLES'),
-                                                         ('NC', 'NEW CALEDONIA'),
-                                                         ('NZ', 'NEW ZEALAND'),
-                                                         ('NI', 'NICARAGUA'),
-                                                         ('NE', 'NIGER'),
-                                                         ('NG', 'NIGERIA'),
-                                                         ('NU', 'NIUE'),
-                                                         ('NF', 'NORFOLK ISLAND'),
-                                                         ('MP', 'NORTHERN MARIANA ISLANDS'),
-                                                         ('NO', 'NORWAY'),
-                                                         ('OM', 'OMAN'),
-                                                         ('PK', 'PAKISTAN'),
-                                                         ('PW', 'PALAU'),
-                                                         ('PS', 'PALESTINIAN TERRITORY, OCCUPIED'),
-                                                         ('PA', 'PANAMA'),
-                                                         ('PG', 'PAPUA NEW GUINEA'),
-                                                         ('PY', 'PARAGUAY'),
-                                                         ('PE', 'PERU'),
-                                                         ('PH', 'PHILIPPINES'),
-                                                         ('PN', 'PITCAIRN'),
-                                                         ('PL', 'POLAND'),
-                                                         ('PT', 'PORTUGAL'),
-                                                         ('PR', 'PUERTO RICO'),
-                                                         ('QA', 'QATAR'),
-                                                         ('RO', 'ROMANIA'),
-                                                         ('RU', 'RUSSIAN FEDERATION'),
-                                                         ('RW', 'RWANDA'),
-                                                         ('SH', 'SAINT HELENA'),
-                                                         ('KN', 'SAINT KITTS AND NEVIS'),
-                                                         ('LC', 'SAINT LUCIA'),
-                                                         ('PM', 'SAINT PIERRE AND MIQUELON'),
-                                                         ('VC', 'SAINT VINCENT AND THE GRENADINES'),
-                                                         ('WS', 'SAMOA'),
-                                                         ('SM', 'SAN MARINO'),
-                                                         ('ST', 'SAO TOME AND PRINCIPE'),
-                                                         ('SA', 'SAUDI ARABIA'),
-                                                         ('SN', 'SENEGAL'),
-                                                         ('CS', 'SERBIA AND MONTENEGRO'),
-                                                         ('SC', 'SEYCHELLES'),
-                                                         ('SL', 'SIERRA LEONE'),
-                                                         ('SG', 'SINGAPORE'),
-                                                         ('SK', 'SLOVAKIA'),
-                                                         ('SI', 'SLOVENIA'),
-                                                         ('SB', 'SOLOMON ISLANDS'),
-                                                         ('SO', 'SOMALIA'),
-                                                         ('ZA', 'SOUTH AFRICA'),
-                                                         ('GS', 'SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS'),
-                                                         ('ES', 'SPAIN'),
-                                                         ('LK', 'SRI LANKA'),
-                                                         ('SD', 'SUDAN'),
-                                                         ('SR', 'SURINAME'),
-                                                         ('SJ', 'SVALBARD AND JAN MAYEN'),
-                                                         ('SZ', 'SWAZILAND'),
-                                                         ('SE', 'SWEDEN'),
-                                                         ('CH', 'SWITZERLAND'),
-                                                         ('SY', 'SYRIAN ARAB REPUBLIC'),
-                                                         ('TW', 'TAIWAN, PROVINCE OF CHINA'),
-                                                         ('TJ', 'TAJIKISTAN'),
-                                                         ('TZ', 'TANZANIA, UNITED REPUBLIC OF'),
-                                                         ('TH', 'THAILAND'),
-                                                         ('TL', 'TIMOR'),
-                                                         ('TG', 'TOGO'),
-                                                         ('TK', 'TOKELAU'),
-                                                         ('TO', 'TONGA'),
-                                                         ('TT', 'TRINIDAD AND TOBAGO'),
-                                                         ('TN', 'TUNISIA'),
-                                                         ('TR', 'TURKEY'),
-                                                         ('TM', 'TURKMENISTAN'),
-                                                         ('TC', 'TURKS AND CAICOS ISLANDS'),
-                                                         ('TV', 'TUVALU'),
-                                                         ('UG', 'UGANDA'),
-                                                         ('UA', 'UKRAINE'),
-                                                         ('AE', 'UNITED ARAB EMIRATES'),
-                                                         ('GB', 'UNITED KINGDOM'),
-                                                         ('US', 'UNITED STATES'),
-                                                         ('UM', 'UNITED STATES MINOR OUTLYING ISLANDS'),
-                                                         ('UY', 'URUGUAY'),
-                                                         ('UZ', 'UZBEKISTAN'),
-                                                         ('VU', 'VANUATU'),
-                                                         ('VN', 'VIET NAM'),
-                                                         ('VG', 'VIRGIN ISLANDS, BRITISH'),
-                                                         ('VI', 'VIRGIN ISLANDS, U.S.'),
-                                                         ('WF', 'WALLIS AND FUTUNA'),
-                                                         ('EH', 'WESTERN SAHARA'),
-                                                         ('YE', 'YEMEN'),
-                                                         ('ZW', 'ZIMBABWE')])
-
-       datebegin = DateField('Begin Date', format='%Y-%m-%d')
-       dateend = DateField('End Date', format='%Y-%m-%d')
-       submit = SubmitField('Create')
+    tripname = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=40)])
+    destination = SelectField('Destination', choices=countires)
+    description = TextAreaField('Description', validators=[DataRequired()])
+    datebegin = DateField('Begin Date', format='%Y-%m-%d')
+    dateend = DateField('End Date', format='%Y-%m-%d')
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
+    submit = SubmitField('Create')
 
 
 class RegistrationForm(FlaskForm):
-       username = StringField('Username', validators=[DataRequired()])
-       email = StringField('Email', validators=[DataRequired(), Email()])
-       password = PasswordField('Password', validators=[DataRequired()])
-       confirm_password = PasswordField('Confirm Password',
-                                        validators=[DataRequired(), EqualTo('password')])
-       first_name = StringField('First name', validators=[DataRequired()])
-       last_name = StringField('Last name', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    first_name = StringField('First name', validators=[DataRequired()])
+    last_name = StringField('Last name', validators=[DataRequired()])
 
-       gender = SelectField('Gender', choices=[('Male', 'Male'),
-                                     ('Female', 'Female'),
-                                     ('Transmale', 'Transmale'),
-                                     ('Transfemale', 'Transfemale'),
-                                     ('Genderqueer', 'Genderqueer'),
-                                     ('SomethingElse', 'Something else')])
-                                     
-       passport_number = StringField('Passport number', validators=[DataRequired()])
-       birthday = DateField('Date of Birth', format='%Y-%m-%d')
-       photo = FileField('Profile Photo', validators=[
-              FileRequired(),
-              FileAllowed(['jpg', 'png'], 'Images only!')
-       ])
-       submit = SubmitField('Register')
+    gender = SelectField('Gender', choices=[('Male', 'Male'),
+                                            ('Female', 'Female'),
+                                            ('Transmale', 'Transmale'),
+                                            ('Transfemale', 'Transfemale'),
+                                            ('Genderqueer', 'Genderqueer'),
+                                            ('SomethingElse', 'Something else')])
+
+    passport_number = StringField('Passport number', validators=[DataRequired()])
+    birthday = DateField('Date of Birth', format='%Y-%m-%d')
+    photo = FileField('Profile Photo', validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'Images only!')
+    ])
+    submit = SubmitField('Register')
 
 
 class LoginForm(FlaskForm):
-       username = StringField('Username', validators=[DataRequired()])
-       password = PasswordField('Password', validators=[DataRequired()])
-       submit = SubmitField('Login')
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
 
 class UpdateAccountInfo(FlaskForm):
-       username = StringField('Username', validators=[DataRequired()])
-       email = StringField('Email', validators=[DataRequired(), Email()])
-       first_name = StringField('First name', validators=[DataRequired()])
-       last_name = StringField('Last name', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    first_name = StringField('First name', validators=[DataRequired()])
+    last_name = StringField('Last name', validators=[DataRequired()])
 
-       gender = SelectField('Gender', choices=[('Male', 'Male'),
-                                               ('Female', 'Female'),
-                                               ('Transmale', 'Transmale'),
-                                               ('Transfemale', 'Transfemale'),
-                                               ('Genderqueer', 'Genderqueer'),
-                                               ('SomethingElse', 'Something else')])
+    gender = SelectField('Gender', choices=[('Male', 'Male'),
+                                            ('Female', 'Female'),
+                                            ('Transmale', 'Transmale'),
+                                            ('Transfemale', 'Transfemale'),
+                                            ('Genderqueer', 'Genderqueer'),
+                                            ('SomethingElse', 'Something else')])
 
-       passport_number = StringField(
-           'Passport number', validators=[DataRequired()])
-       birthday = DateField('Date of Birth', format='%Y-%m-%d')
-       password = PasswordField('Password', validators=[DataRequired()])
-       confirm_password = PasswordField('Confirm Password',
-                                        validators=[DataRequired(), EqualTo('password')])
-       submit = SubmitField('Update')
+    passport_number = StringField(
+        'Passport number', validators=[DataRequired()])
+    birthday = DateField('Date of Birth', format='%Y-%m-%d')
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Update')
 
 
 class ForgotPasswordForm(FlaskForm):
-       email = StringField('Email', validators=[DataRequired(), Email()])
-       passport_no = StringField('Passport number', validators=[DataRequired()])
-       submit = SubmitField('Confirm')
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    passport_number = StringField('Passport number', validators=[DataRequired()])
+    submit = SubmitField('Request Change Password')
+
+
+class NewPassword(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Confirm New Password')
+
 
 class SearchUsersForm(FlaskForm):
-       username = StringField('Search User by username', validators=[DataRequired()])
-       submit = SubmitField('Search')
+    username = StringField('Search User by username', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
 
 class UpdateImage(FlaskForm):
-       photo = FileField('New Profile Photo', validators=[
-           FileRequired(),
-           FileAllowed(['jpg', 'png'], 'Images only!')
-       ])
-       submit = SubmitField('Upload')
+    photo = FileField('New Profile Photo', validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'Images only!')
+    ])
+    submit = SubmitField('Upload')
+
 
 class GiveRatings(FlaskForm):
-       friendliness = SelectField('Friendliness', choices=[(1, 1.0),
-                                                           (2, 2.0),
-                                                           (3, 3.0),
-                                                           (4, 4.0),
-                                                           (5, 5.0)])
-       cleanliness = SelectField('Cleanliness', choices=[(1, 1.0),
-                                                          (2, 2.0),
-                                                          (3, 3.0),
-                                                          (4, 4.0),
-                                                          (5, 5.0)])
-       timeliness = SelectField('Timeliness', choices=[(1, 1.0),
-                                                         (2, 2.0),
-                                                         (3, 3.0),
-                                                         (4, 4.0),
-                                                         (5, 5.0)])
-       foodies = SelectField('Foodies', choices=[(1, 1.0),
+    friendliness = SelectField('Friendliness', choices=[(1, 1.0),
+                                                        (2, 2.0),
+                                                        (3, 3.0),
+                                                        (4, 4.0),
+                                                        (5, 5.0)])
+    cleanliness = SelectField('Cleanliness', choices=[(1, 1.0),
                                                       (2, 2.0),
                                                       (3, 3.0),
                                                       (4, 4.0),
                                                       (5, 5.0)])
-       submit = SubmitField('Rate')
+    timeliness = SelectField('Timeliness', choices=[(1, 1.0),
+                                                    (2, 2.0),
+                                                    (3, 3.0),
+                                                    (4, 4.0),
+                                                    (5, 5.0)])
+    foodies = SelectField('Foodies', choices=[(1, 1.0),
+                                              (2, 2.0),
+                                              (3, 3.0),
+                                              (4, 4.0),
+                                              (5, 5.0)])
+    submit = SubmitField('Rate')
+
+
+class SearchTripsForm(FlaskForm):
+
+    destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
+    max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
+    submit = SubmitField('Search')
+
+
+class UpdateTrip(FlaskForm):
+    destination = SelectField('Destination', choices=countires)
+    description = TextAreaField('Description', validators=[DataRequired()])
+    datebegin = DateField('Begin Date', format='%Y-%m-%d')
+    dateend = DateField('End Date', format='%Y-%m-%d')
+    max_budget = DecimalField('Maximum Budget (USD)', validators=[DataRequired(), NumberRange(min=0.0)])
+    triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
+    submit = SubmitField('Update')

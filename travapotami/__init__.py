@@ -3,6 +3,9 @@ from flask import Flask, render_template
 from . import db
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask_admin import Admin
+from .admin_views import MyModelView
+
 
 login_manager = LoginManager()
 bcrypt = Bcrypt()
@@ -34,6 +37,8 @@ def create_app(test_config=None):
     db.init_app_command(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
+    admin = Admin(app)
+    
     
     with app.app_context():
         from .auth import auth_blueprint
@@ -47,5 +52,10 @@ def create_app(test_config=None):
         @app.errorhandler(404)
         def page_not_found(e):
             return render_template('404.html'), 404
-
+        from .models import User, Group, Trip, Rating
+        dbs = db.get_db()
+        admin.add_view(MyModelView(User, dbs.session))
+        admin.add_view(MyModelView(Group, dbs.session))
+        admin.add_view(MyModelView(Trip, dbs.session))
+        admin.add_view(MyModelView(Rating, dbs.session))
     return app
