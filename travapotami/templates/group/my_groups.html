@@ -11,7 +11,6 @@
             <li class="collection-item avatar">
             <i class="material-icons circle teal">face</i>
             <span class="title">{{ result[i].group_name }}</span>
-<<<<<<< HEAD
             <p>
                 Group Description
                 <br>
@@ -25,9 +24,7 @@
                 <br>
                 Group Admin: {{ result[i].admins[0].username }}
                 <br>
-=======
             <p>{{ result[i].description }}<br>
->>>>>>> 2fda36ffa2f4e228dd80f8f6aeb91b72c74244f3
                 Number of Members: {{ result[i].mates|length+1 }} 
             </p>
             <a href="{{  url_for('group_blueprint.group_info', group=result[i])  }}" class="secondary-content"><i class="material-icons">info_outline</i></a>

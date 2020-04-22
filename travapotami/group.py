@@ -78,11 +78,7 @@ def edit_group(group):
     if request.method == 'POST':
         group_name = request.form['groupname']
         public = request.form.get('accessibility')
-<<<<<<< HEAD
-
-=======
         description = request.form['group-description']
->>>>>>> 2fda36ffa2f4e228dd80f8f6aeb91b72c74244f3
         if public:
             public = True
             flash("Public Group")
@@ -95,22 +91,10 @@ def edit_group(group):
             if x == "groupname" or x == "group-description" or not request.form[x] or request.form[x] == 'on':
                 continue
             usernames.append(request.form[x])
-<<<<<<< HEAD
         flash(usernames)
         
         group.group_name = group_name
         group.public = public
-=======
-        #flash(usernames)
-
-        group = Group( group_name = group_name,
-                        public = public, 
-                        description = description
-        )
-        db.session.add(group)
-        db.session.commit()
-        group.admins = [current_user]
->>>>>>> 2fda36ffa2f4e228dd80f8f6aeb91b72c74244f3
         db.session.commit()
 
         to_add = []
