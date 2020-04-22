@@ -7,7 +7,6 @@ from . import bcrypt, login_manager
 from .models import db, User
 
 # Registration page
-
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -55,8 +54,6 @@ def register():
     return render_template('./auth/register.html', title='Register', form=form)
 
 # Login Page
-
-
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -76,8 +73,6 @@ def login():
     return render_template('./auth/login.html', title='Login', form=form)
 
 # Logout
-
-
 @auth_blueprint.route('/logout')
 @login_required
 def logout():
@@ -86,8 +81,6 @@ def logout():
     return redirect(url_for('main_blueprint.home'))
 
 # Forget Password
-
-
 @auth_blueprint.route('/forgetpassword', methods=['GET', 'POST'])
 def forgetpassword():
     form = ForgotPasswordForm()
@@ -167,8 +160,6 @@ def update_photo():
     return render_template('./auth/update_photo.html', title="Update Photo", form=form, image=image)
 
 # display user
-
-
 @auth_blueprint.route('/user/<string:username>', methods=['GET'])
 def display_account(username):
     user = User.query.filter_by(username=username).first()

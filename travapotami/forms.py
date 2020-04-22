@@ -131,9 +131,8 @@ class GiveRatings(FlaskForm):
 
 
 class SearchTripsForm(FlaskForm):
-
     destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
-    max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[NumberRange(min=0.0)])
+    max_budget = DecimalField('Maximum Budget (USD) (Optional)', validators=[])
     triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
     submit = SubmitField('Search')
 

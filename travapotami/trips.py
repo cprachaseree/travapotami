@@ -147,28 +147,40 @@ def search_trips():
     form = SearchTripsForm()
     result = None
     trip_types = list_to_string(form.triptype.data)
-    if form.validate_on_submit():
-        if form.max_budget.data and form.triptype.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.budget_max <= form.max_budget.data,
-                Trip.trip_type.like(trip_types)
-            )
-        elif form.max_budget.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.budget_max <= form.max_budget.data
-            )
-        elif form.triptype.data:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data,
-                Trip.trip_type.like(trip_types)
-            )
-        else:
-            result = Trip.query.filter(
-                Trip.destination == form.destination.data
-            )
-        flash(repr(result))
 
+    if request.method == 'POST':
+        if form.max_budget.data != None and not isinstance(float(form.max_budget.data), float) and not isinstance(int(form.max_budget.data), int):
+            flash("Max budget should be decimal.")
+        else:
+            if form.max_budget.data and form.triptype.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.budget_max <= form.max_budget.data,
+                    Trip.trip_type.like(trip_types)
+                )
+            elif form.max_budget.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.budget_max <= form.max_budget.data
+                )
+            elif form.triptype.data:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data,
+                    Trip.trip_type.like(trip_types)
+                )
+            else:
+                result = Trip.query.filter(
+                    Trip.destination == form.destination.data
+                )
+            if result:
+                result = result.all()
+                # view the trips
+                flash("Viewing result trips.")
+                pass
+            else:
+                flash("Your search returns no query. Please try another one.")
+    if form.errors:
+        for i, e in form.errors.items():
+            flash(f"{i}: {e}")
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
 
