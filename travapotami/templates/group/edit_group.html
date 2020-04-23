@@ -5,7 +5,7 @@
     <br>
     <p> Current members: {{ "&nbsp;"|safe*5 }}  
     {%for i in range(0, group.mates|length)%}
-    {{ group.mates[i] }}
+    {{ group.mates[i].username }}
     {{ "&nbsp;"|safe*5 }}
     {%endfor%}
     </p>
