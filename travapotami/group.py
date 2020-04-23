@@ -19,21 +19,17 @@ def create_group():
             public = request.form.get('accessibility')
             description = request.form['group-description']
             icon = request.form['icon']
-            flash(icon)
 
             if public:
                 public = True
-                flash("Public Group")
             else:
                 public = False
-                flash("Private Group")
             usernames = []
             # get usernames from the form
             for x in request.form:
-                if x == "groupname" or x == "group-description" or not request.form[x] or request.form[x] == 'on':
+                if x == "groupname" or x == "group-description" or x == 'icon' or not request.form[x] or request.form[x] == 'on':
                     continue
                 usernames.append(request.form[x])
-            #flash(usernames)
 
             group = Group( group_name = group_name,
                             public = public,
@@ -55,10 +51,9 @@ def create_group():
                     flash(f"{username} does not exist!")
             group.mates = to_add
             db.session.commit()
-
-            flash(f"{group_name} is created with {len(to_add)+1} member(s).")
-            return render_template('./group/create_group.html')
-
+            flash ("New group is created.")
+            return redirect(url_for('group_blueprint.my_groups'))
+            
         return render_template('./group/create_group.html', title='Create Group')
 
     else:
@@ -157,17 +152,21 @@ def my_groups():
 
 @group_blueprint.route('/join_group/<string:groupnum>')
 def join_group(groupnum):
-    groupnum = int(''.join(filter(str.isdigit, groupnum)))
-    group = Group.query.filter_by(id=groupnum).first()
-    if current_user == group.admins[0]:
-        flash("You are the admin of this group!")
-    elif current_user in group.mates:
-        flash("You are already one of the group mates.")
+    if current_user.is_authenticated:
+        groupnum = int(''.join(filter(str.isdigit, groupnum)))
+        group = Group.query.filter_by(id=groupnum).first()
+        if current_user == group.admins[0]:
+            flash("You are the admin of this group!")
+        elif current_user in group.mates:
+            flash("You are already one of the group mates.")
+        else:
+            group.mates = [current_user]
+            db.session.commit()
+            flash(f"Successfully Joined {group.group_name}")
+        return redirect(url_for('group_blueprint.browse_groups'))
     else:
-        group.mates = [current_user]
-        db.session.commit()
-        flash(f"Successfully Joined {group.group_name}")
-    return redirect(url_for('group_blueprint.browse_groups'))
+        flash("Login first please!")
+        return redirect(url_for('auth_blueprint.login'))
 
 @group_blueprint.route('/leave_group/<string:group>')
 def leave_group(group):
@@ -181,7 +180,7 @@ def leave_group(group):
 
 @group_blueprint.route('/delete_group/<string:group>')
 def delete_group(group):
-    flash("Delete Group")
+    flash("Deleted Group")
     group = int(''.join(filter(str.isdigit, group)))
     group = Group.query.get(group)
     db.session.delete(group)

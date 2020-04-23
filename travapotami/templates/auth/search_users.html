@@ -1,5 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
+
+<style>
+    .tabs .tab a {
+    color: rgba(38, 166, 154, 0.7);
+    }
+
+    .tabs .tab a:hover {
+    color:#26a69a;
+    }
+
+    .tabs .tab a:focus.active {
+    color:#26a69a;
+    background-color: rgba(38, 166, 154, 0.2);
+    }
+
+    .tabs .indicator {
+    background-color:#26a69a;
+    }
+</style>
+
 <div class="content-section">
     <br>
         <h1>Search for friends to give them ratings!</h1>   
@@ -20,15 +40,14 @@
         <h3 class="container center">Take a look at the TOP 10 ratings of all time in each categories!</h3>
         <br>
         <div class="container">
-            <ul id="top-ratings" class="tabs brown lighten-5 tabs-fixed-width tab-demo z-depth-1">
+            <ul id="top-ratings" class="tabs white tabs-fixed-width tab-demo z-depth-1">
                 <li class="tab col s4"><a class="active teal-text" href="#friendliness">Friendliness</a></li>
                 <li class="tab col s4"><a class="teal-text"href="#cleanliness">Cleanliness</a></li>
                 <li class="tab col s4"><a class="teal-text"href="#timeliness">Timeliness</a></li>
                 <li class="tab col s4"><a class="teal-text"href="#foodies">Foodies</a></li>
-                <div class="indicator indigo darken-4" ></div>
             </ul>
             
-            <div id="friendliness" class="col s6 grey lighten-3">
+            <div id="friendliness" class="col s6 grey lighten-5">
                 <div class="container center">
                     <br>
                     Get friendliness by being nice to your fellow tripmates! Smile, be polite, and have a great time!
@@ -36,17 +55,17 @@
                     <table class="responsive-table">
                     {% for user in friendly_users %}
                     <tr>
-                        <th>
+                        <th style="text-align:center">
                             <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
                                 {{ user.username }}
                             </a>
                         </th>
-                        <td>{{ user.rating.friendliness }}</td>
+                        <td style="text-align:left">{{ user.rating.friendliness }}</td>
                     </tr>
                     {% endfor %}
                 </table>
             </div>
-            <div id="cleanliness" class="col s6  grey lighten-3">
+            <div id="cleanliness" class="col s6  grey lighten-5">
                 <div class="container center">
                     <br>
                     People will base your cleanliness on your hygiene and messiness. Be sure to take care of yourself!
@@ -54,17 +73,17 @@
                 <table class="responsive-table">
                     {% for user in clean_users %}
                     <tr>
-                        <th>
+                        <th style="text-align:center">
                             <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
                                 {{ user.username }}
                             </a>
                         </th>
-                        <td>{{ user.rating.cleanliness }}</td>
+                        <td style="text-align:left">{{ user.rating.cleanliness }}</td>
                     </tr>
                     {% endfor %}
                 </table>
             </div>
-            <div id="timeliness" class="col s6 grey lighten-3">
+            <div id="timeliness" class="col s6 grey lighten-5">
                 <div class="container center">
                     <br>
                     Don't keep your mates waiting! Everyone is excited to be on this trip. Make sure everyone has a worthwhile time
@@ -73,17 +92,17 @@
                 <table class="responsive-table">
                     {% for user in timely_users %}
                     <tr>
-                        <th>
+                        <th style="text-align:center">
                             <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
                                 {{ user.username }}
                             </a>
                         </th>
-                        <td>{{ user.rating.timeliness }}</td>
+                        <td style="text-align:left">{{ user.rating.timeliness }}</td>
                     </tr>
                     {% endfor %}
                 </table>
             </div>
-            <div id="foodies" class="col s6 grey lighten-3">
+            <div id="foodies" class="col s6 grey lighten-5">
                 <div class="container center">
                     <br>
                     Rate your friends know if they are a foodie :) If one of your main goal for travelling is to try out all the good foods out there, let others know!
@@ -91,12 +110,12 @@
                 <table class="responsive-table">
                     {% for user in food_users %}
                     <tr>
-                        <th>
+                        <th style="text-align:center">
                             <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
                                 {{ user.username }}
                             </a>
                         </th>
-                        <td>{{ user.rating.foodies }}</td>
+                        <td style="text-align:left">{{ user.rating.foodies }}</td>
                     </tr>
                     {% endfor %}
                 </table>
