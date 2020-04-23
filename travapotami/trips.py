@@ -123,7 +123,7 @@ def remove_participant(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.participants.remove(user)
     db.session.commit()
-    flash(user.first_name + 'is removed from participants!')
+    flash(user.first_name + ' is removed from participants!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/remove_host/<int:userid>', methods=['GET'])
@@ -132,7 +132,7 @@ def remove_host(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.hosts.remove(user)
     db.session.commit()
-    flash(user.first_name + 'is removed from hosts!')
+    flash(user.first_name + ' is removed from hosts!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/add_host', methods=['GET', 'POST'])
@@ -149,7 +149,7 @@ def add_host(tripid):
         else:
             flash("Username does not exist!")
     elif request.method == 'GET':
-        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
 @trips_blueprint.route('/trip/<int:tripid>/add_participant', methods=['GET', 'POST'])
 def add_participant(tripid):
@@ -165,7 +165,7 @@ def add_participant(tripid):
         else:
             flash("Username does not exist!")
     elif request.method == 'GET':
-        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
 @trips_blueprint.route('/trip/<int:tripid>/edit', methods=['GET', 'POST'])
 def edit_trip(tripid):

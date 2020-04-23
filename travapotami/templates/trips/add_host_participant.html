@@ -3,6 +3,7 @@
 <div class="content-section">
         <h1>Enter a Username!</h1>   
         <form action="" method="POST" class="container">
+            <a class="btn-small" href="{{url_for('trips_blueprint.display_trip',tripid=trip.id)}}">Back to Trip</a>
             {{ form.csrf_token }}
             <div class="input-field">
                 {{ form.username }}

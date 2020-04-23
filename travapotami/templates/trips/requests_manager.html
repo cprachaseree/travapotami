@@ -9,7 +9,8 @@
             {%if trip.pending_participants%}
                 {%for x in trip.pending_participants%}
                 <tr>
-                    <th>{{x.username}}</th>
+                    <th><a href="{{ url_for('auth_blueprint.display_account', username=x.username) }}">{{x.username}}</a></th>
+                    <td>{{x.first_name}} {{x.last_name}}</td>
                     <td><a href="{{url_for('trips_blueprint.participant_approve',tripid=trip.id, userid=x.id)}}" class="btn-small">Approve</a>
                     <a href="{{url_for('trips_blueprint.participant_reject',tripid=trip.id, userid=x.id)}}" class="btn-small">Reject</a></td>
                 </tr>

@@ -99,9 +99,11 @@
         <a href="{{url_for('trips_blueprint.edit_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Edit Trip</a>
         <a href="{{url_for('trips_blueprint.requests_manager',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Approve/Reject Requests</a>
     {%endif%}
-    {%if user not in trip.hosts and user not in trip.participants%}
+    {%if user not in trip.hosts and user not in trip.participants and user not in trip.pending_participants%}
         <a href="{{url_for('trips_blueprint.join_trip',tripid=trip.id)}}" class="col s4 btn-large tooltipped" ">Request to Join</a>
-        
+    {%endif%}
+    {%if user not in trip.hosts and user in trip.pending_participants%}
+        <a class="col s4 btn-large disabled tooltipped" ">Pending Approval</a>
     {%endif%}
     <br>
     <br>
