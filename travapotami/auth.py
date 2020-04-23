@@ -172,6 +172,7 @@ def display_account(username):
     if user.photo:
         image = b64encode(user.photo).decode("utf-8")
     gender = str(user.gender)
+    gender = gender.split(".")[1]
     return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image, gender=gender)
 
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])
