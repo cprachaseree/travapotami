@@ -301,6 +301,10 @@ def create_group_trip(group):
         trip.participants = to_add          
         db.session.commit()
         flash("Successfully created trip!")
+
+        group.trips.append(trip)
+        db.session.commit()
+
         return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
 
     return render_template('./trips/create_group_trip.html', title='Create Group Trip', group=group, form=form)
