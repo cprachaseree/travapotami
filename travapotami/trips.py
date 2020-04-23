@@ -105,7 +105,7 @@ def participant_approve(tripid, userid):
     trip.pending_participants.remove(user)
     trip.participants.append(user)
     db.session.commit()
-    flash(user.username + 'is added to participants!')
+    flash(user.username + ' is added to participants!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])
@@ -114,7 +114,7 @@ def participant_reject(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.pending_participants.remove(user)
     db.session.commit()
-    flash(user.name + 'is rejected!')
+    flash(user.username + ' is rejected!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/remove_participant/<int:userid>', methods=['GET'])
@@ -123,7 +123,7 @@ def remove_participant(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.participants.remove(user)
     db.session.commit()
-    flash(user.first_name + 'is removed from participants!')
+    flash(user.first_name + ' is removed from participants!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/remove_host/<int:userid>', methods=['GET'])
@@ -132,7 +132,7 @@ def remove_host(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.hosts.remove(user)
     db.session.commit()
-    flash(user.first_name + 'is removed from hosts!')
+    flash(user.first_name + ' is removed from hosts!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/add_host', methods=['GET', 'POST'])
@@ -149,7 +149,7 @@ def add_host(tripid):
         else:
             flash("Username does not exist!")
     elif request.method == 'GET':
-        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
 @trips_blueprint.route('/trip/<int:tripid>/add_participant', methods=['GET', 'POST'])
 def add_participant(tripid):
@@ -165,7 +165,7 @@ def add_participant(tripid):
         else:
             flash("Username does not exist!")
     elif request.method == 'GET':
-        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form)
+        return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
 @trips_blueprint.route('/trip/<int:tripid>/edit', methods=['GET', 'POST'])
 def edit_trip(tripid):
@@ -229,26 +229,30 @@ def search_trips():
                 result = Trip.query.filter(
                     Trip.destination == form.destination.data,
                     Trip.budget_max <= form.max_budget.data,
-                    Trip.trip_type.like(trip_types)
+                    Trip.trip_type.like(trip_types),
+                    Trip.finished == False
                 )
             elif form.max_budget.data:
                 result = Trip.query.filter(
                     Trip.destination == form.destination.data,
-                    Trip.budget_max <= form.max_budget.data
+                    Trip.budget_max <= form.max_budget.data,
+                    Trip.finished == False
                 )
             elif form.triptype.data:
                 result = Trip.query.filter(
                     Trip.destination == form.destination.data,
-                    Trip.trip_type.like(trip_types)
+                    Trip.trip_type.like(trip_types),
+                    Trip.finished == False
                 )
             else:
                 result = Trip.query.filter(
-                    Trip.destination == form.destination.data
+                    Trip.destination == form.destination.data,
+                    Trip.finished == False
                 )
             result = result.all()
             if result:
-                t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
-                t2 = Trip.query.filter(Trip.participants.contains(current_user)).all()
+                t1 = Trip.query.filter(Trip.hosts.contains(current_user), Trip.finished == False).all()
+                t2 = Trip.query.filter(Trip.participants.contains(current_user), Trip.finished == False).all()
                 mytrips = list(set(t1) | set(t2))
                 flash("Viewing result trips.")
                 return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips)
@@ -308,3 +312,17 @@ def create_group_trip(group):
         return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
 
     return render_template('./trips/create_group_trip.html', title='Create Group Trip', group=group, form=form)
+
+@trips_blueprint.route('/trip/<int:tripid>/finish', methods=['GET', 'POST'])
+def finish_trip(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    trip.finished = True
+    db.session.commit()
+    return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
+
+@trips_blueprint.route('/trip/<int:tripid>/delete', methods=['GET', 'POST'])
+def delete_trip(tripid):
+    trip = Trip.query.filter_by(id=tripid).first()
+    db.session.delete(trip)
+    db.session.commit()
+    return redirect(url_for('main_blueprint.home'))

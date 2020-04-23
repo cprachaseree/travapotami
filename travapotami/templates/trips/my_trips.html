@@ -3,7 +3,7 @@
 <div class="container">
     <br>
     {%if result%}
-        <h3>Here are all your trips!</h3>
+        <h1>Here are all your trips!</h1>
 
         {%for trip in result%}
         <div class="row">
@@ -14,9 +14,17 @@
                     <img class="activator" src="https://lipis.github.io/flag-icon-css/flags/4x3/{{trip['imagecode']}}.svg" width="200" height="200" style="margin:40px 0px 0px 0px">
                     </div>
                     <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">{{trip.country}}<i class="material-icons right">more_vert</i></span>
+                    <span class="card-title activator grey-text text-darken-4">
+                        {%if trip.finished%}
+                            Archived: 
+                        {%endif%}
+                        {{trip.country}}
+                        <i class="material-icons right">more_vert</i></span>
                     <a href="{{url_for('trips_blueprint.display_trip', tripid=trip.id)}}">
-                    <p>Check out your trip to {{trip.country}} on {{trip.date_from}}</p>
+                    <p>Check out your 
+                    {%if trip.finished%}
+                        past 
+                    {%endif%} trip to {{trip.country}} on {{trip.date_from}}</p>
                     </div>
                     </a>
                     <div class="card-reveal teal lighten-5">
@@ -47,7 +55,4 @@
     {%endif%}
 
 </div>
-
-
-
 {% endblock content %}

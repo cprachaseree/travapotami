@@ -43,7 +43,7 @@ class RegistrationForm(FlaskForm):
                                             ('Genderqueer', 'Genderqueer'),
                                             ('SomethingElse', 'Something else')])
 
-    passport_number = StringField('Passport number', validators=[DataRequired()])
+    passport_number = StringField('Passport number', validators=[DataRequired(), Length(max=16)])
     birthday = DateField('Date of Birth', format='%Y-%m-%d')
     photo = FileField('Profile Photo', validators=[
         FileRequired(),
@@ -72,7 +72,7 @@ class UpdateAccountInfo(FlaskForm):
                                             ('SomethingElse', 'Something else')])
 
     passport_number = StringField(
-        'Passport number', validators=[DataRequired()])
+        'Passport number', validators=[DataRequired(), Length(max=16)])
     birthday = DateField('Date of Birth', format='%Y-%m-%d')
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',

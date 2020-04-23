@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, logout_user, login_required
 auth_blueprint = Blueprint('auth_blueprint', __name__)
 from . import bcrypt, login_manager
-from .models import db, User
+from .models import db, User, Rating
 
 # Registration page
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
@@ -47,7 +47,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
-            return redirect(url_for('auth_blueprint.login'))
+            return redirect(url_for('auth_blueprint.login', current_user=None))
     if form.errors:
         for i, e in form.errors.items():
             flash(e[0])
@@ -175,6 +175,15 @@ def display_account(username):
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])
 def search_users():
     form = SearchUsersForm()
+    top_friendliness = Rating.query.order_by(Rating.friendliness.desc()).limit(10).all()
+    top_cleanliness = Rating.query.order_by(Rating.cleanliness.desc()).limit(10).all()
+    top_timeliness = Rating.query.order_by(Rating.timeliness.desc()).limit(10).all()
+    top_foodies = Rating.query.order_by(Rating.foodies.desc()).limit(10).all()
+    friendly_users = [User.query.filter_by(id=x.user_id).first() for x in top_friendliness]
+    clean_users = [User.query.filter_by(id=x.user_id).first() for x in top_cleanliness]
+    timely_users = [User.query.filter_by(id=x.user_id).first() for x in top_timeliness]
+    food_users = [User.query.filter_by(id=x.user_id).first() for x in top_foodies]
+
     if form.validate_on_submit():
         username = form.username.data
         user = User.query.filter_by(username=username).first()
@@ -182,7 +191,7 @@ def search_users():
             return redirect(url_for('auth_blueprint.display_account', username=username))
         else:
             flash("Username does not exist!")
-    return render_template('./auth/search_users.html', title="Search Users", form=form)
+    return render_template('./auth/search_users.html', title="Search Users", form=form, friendly_users=friendly_users, clean_users=clean_users, timely_users=timely_users, food_users=food_users)
 
 
 @auth_blueprint.route('/rate_user/<string:username>', methods=['GET', 'POST'])
