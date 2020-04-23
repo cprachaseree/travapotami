@@ -14,6 +14,7 @@ setup(
         'flask_login',
         'flask-admin',
         'flask_wtf',
-        'flask_paginate'
+        'flask_paginate',
+        'pycountry'
     ],
 )

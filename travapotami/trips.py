@@ -5,6 +5,8 @@ from datetime import date, datetime, timedelta
 from .models import db, Trip, User, Group
 import pycountry
 import sys
+from flask_paginate import Pagination, get_page_parameter
+
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
 
 def list_to_string(input):
@@ -215,52 +217,56 @@ def edit_trip(tripid):
     return render_template('./trips/edit_trip.html', title='Edit Trip', form=form)
 
 
+@trips_blueprint.route('/result_trips/<string:destination>/<string:max_budget>/<string:triptype>', methods=['GET'])
+def result_trips(destination, max_budget, triptype):
+    if max_budget != "None" and triptype != "None":
+        result = Trip.query.filter(
+            Trip.destination == destination,
+            Trip.budget_max <= max_budget,
+            Trip.trip_type.like(triptype)
+        )
+    elif max_budget != "None":
+        result = Trip.query.filter(
+            Trip.destination == destination,
+            Trip.budget_max <= max_budget
+        )
+    elif triptype != "None":
+        result = Trip.query.filter(
+            Trip.destination == destination,
+            Trip.trip_type.like(triptype)
+        )
+    else:
+        result = Trip.query.filter(
+            Trip.destination == destination
+        )
+    result = result.all()
+    t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
+    t2 = Trip.query.filter(
+        Trip.participants.contains(current_user)).all()
+    mytrips = list(set(t1) | set(t2))
+    page = page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination = Pagination(page=page, total=len(result), per_page=3)
+    if result:
+        flash("Viewing result trips.")
+    else:
+        flash("Your search returns no query. Please try another one.")
+        return redirect(url_for('trips_blueprint.search_trips'))
+    return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips, page=page, pagination=pagination, per_page=2)
+
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
     form = SearchTripsForm()
-    result = None
-    trip_types = list_to_string(form.triptype.data)
-
     if request.method == 'POST':
         if form.max_budget.data != None and not isinstance(float(form.max_budget.data), float) and not isinstance(int(form.max_budget.data), int):
             flash("Max budget should be decimal.")
         else:
-            if form.max_budget.data and form.triptype.data:
-                result = Trip.query.filter(
-                    Trip.destination == form.destination.data,
-                    Trip.budget_max <= form.max_budget.data,
-                    Trip.trip_type.like(trip_types),
-                    Trip.finished == False
-                )
-            elif form.max_budget.data:
-                result = Trip.query.filter(
-                    Trip.destination == form.destination.data,
-                    Trip.budget_max <= form.max_budget.data,
-                    Trip.finished == False
-                )
-            elif form.triptype.data:
-                result = Trip.query.filter(
-                    Trip.destination == form.destination.data,
-                    Trip.trip_type.like(trip_types),
-                    Trip.finished == False
-                )
-            else:
-                result = Trip.query.filter(
-                    Trip.destination == form.destination.data,
-                    Trip.finished == False
-                )
-            result = result.all()
-            if result:
-                t1 = Trip.query.filter(Trip.hosts.contains(current_user), Trip.finished == False).all()
-                t2 = Trip.query.filter(Trip.participants.contains(current_user), Trip.finished == False).all()
-                mytrips = list(set(t1) | set(t2))
-                flash("Viewing result trips.")
-                return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips)
-            else:
-                flash("Your search returns no query. Please try another one.")
-    if form.errors:
-        for i, e in form.errors.items():
-            flash(f"{i}: {e}")
+            trip_types = list_to_string(form.triptype.data)
+            if form.max_budget.data == None:
+                form.max_budget.data = "None"
+            if trip_types == None:
+                trip_types = "None"
+            max_budget = str(form.max_budget.data)
+            return redirect(url_for('trips_blueprint.result_trips', destination=form.destination.data, max_budget=max_budget, triptype=trip_types))
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
 
 

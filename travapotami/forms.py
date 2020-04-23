@@ -17,7 +17,6 @@ trip_type = [('Relaxing', 'Relaxing'),
 
 class TripForm(FlaskForm):
 
-    tripname = StringField('Trip Name', validators=[DataRequired(), Length(min=2, max=40)])
     destination = SelectField('Destination', choices=countires)
     description = TextAreaField('Description', validators=[DataRequired()])
     datebegin = DateField('Begin Date', format='%Y-%m-%d')

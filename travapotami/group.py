@@ -3,6 +3,7 @@ from flask_login import current_user
 from .models import db, Group, User, Trip
 from flask_paginate import Pagination, get_page_parameter
 from sqlalchemy import or_, and_
+import pycountry
 
 group_blueprint = Blueprint('group_blueprint', __name__)
 
@@ -79,6 +80,10 @@ def group_info(group):
         is_mate = True
     else:
         is_mate = False
+    
+    for i in group.trips:
+        i.country = pycountry.countries.get(alpha_2=i.destination).name
+        i.imagecode = str(i.destination).lower()
 
     return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin, is_mate=is_mate)
 
