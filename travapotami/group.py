@@ -74,7 +74,12 @@ def group_info(group):
         is_admin = True
     else:
         is_admin = False
-    return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin)
+    
+    if current_user in searchgroup.mates:
+        is_mate = True
+    else:
+        is_mate = False
+    return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin, is_mate=is_mate)
 
 @group_blueprint.route('/edit_group/<string:group>',  methods=['GET', 'POST'])
 def edit_group(group):
@@ -134,10 +139,6 @@ def browse_groups():
     pagination = Pagination(page=page, total=len(result), per_page=6)
     return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
 
-@group_blueprint.route('/search_groups')
-def search_groups():
-
-    return render_template('./group/search_groups.html', title='Search Groups')
 
 @group_blueprint.route('/my_groups')
 def my_groups():
