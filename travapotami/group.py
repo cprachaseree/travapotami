@@ -53,7 +53,7 @@ def create_group():
             db.session.commit()
             flash ("New group is created.")
             return redirect(url_for('group_blueprint.my_groups'))
-            
+
         return render_template('./group/create_group.html', title='Create Group')
 
     else:
@@ -171,7 +171,6 @@ def join_group(groupnum):
 @group_blueprint.route('/leave_group/<string:group>')
 def leave_group(group):
     group = int(''.join(filter(str.isdigit, group)))
-    flash(group)
     group = Group.query.get(group)
     group.mates.remove(current_user)
     db.session.commit()

@@ -25,7 +25,9 @@
 
             <ul class="right">
                 <li>
-                    <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">notifications</i></a>
+                    <a class="btn-floating btn-large waves-effect waves-light red"
+                    ><i class="material-icons">notifications</i>
+                    </a>
                 </li>
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('auth_blueprint.logout') }}">Logout</a></li>
@@ -38,11 +40,11 @@
 
         <div class="teal nav-content">
             <ul class="tabs tabs-transparent tabs-fixed-width">
-                <li class="tab"><a href="{{  url_for('trips_blueprint.choose_trip')  }}">trips</a></li>
-                <li class="tab"><a href="{{  url_for('auth_blueprint.search_users')  }}">find friends</a></li>
-                <li class="tab"><a href="{{  url_for('group_blueprint.choose_group')  }}">groups</a></li>
+                <li class="tab waves-effect"><a href="{{  url_for('trips_blueprint.choose_trip')  }}">trips</a></li>
+                <li class="tab waves-effect"><a href="{{  url_for('auth_blueprint.search_users')  }}">find friends</a></li>
+                <li class="tab waves-effect"><a href="{{  url_for('group_blueprint.choose_group')  }}">groups</a></li>
                 {% if current_user.is_authenticated %}
-                    <li class="tab"><a href="{{  url_for('auth_blueprint.display_account', username=current_user.username)  }}">my profile</a></li>
+                    <li class="tab waves-effect"><a href="{{  url_for('auth_blueprint.display_account', username=current_user.username)  }}">my profile</a></li>
                 {% endif %}
             </ul>
         </div>
