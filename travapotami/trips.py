@@ -252,7 +252,7 @@ def result_trips(destination, max_budget, triptype):
     else:
         flash("Your search returns no query. Please try another one.")
         return redirect(url_for('trips_blueprint.search_trips'))
-    return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips, page=page, pagination=pagination, per_page=2)
+    return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips, page=page, pagination=pagination, per_page=3)
 
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
