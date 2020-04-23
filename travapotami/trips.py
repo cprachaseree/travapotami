@@ -166,6 +166,7 @@ def add_participant(tripid):
             return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
         else:
             flash("Username does not exist!")
+            return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
     elif request.method == 'GET':
         return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
