@@ -65,8 +65,10 @@ def login():
             login_user(user)
             flash("Logged in. Redirected to home page.")
             return redirect(url_for('main_blueprint.home'))
+        elif user:
+            flash("Incorrect password. Please try again.")
         else:
-            flash("Incorrect username or password. Please try again.")
+            flash("Incorrect username and password. Please try again.")
     if form.errors:
         for i, e in form.errors.items():
             flash(e[0])
