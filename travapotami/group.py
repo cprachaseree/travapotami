@@ -122,24 +122,24 @@ def edit_group(group):
         group.mates = to_add
         db.session.commit()
         flash("Your group is edited")
-
         return redirect(url_for('group_blueprint.my_groups'))
     return render_template('./group/edit_group.html', title='Edit Group', group=group)
 
 @group_blueprint.route('/browse_groups', methods=['GET', 'POST'])
 def browse_groups():
     if request.method == 'POST':
-        flash(request.form['search'])
-        result = Group.query.filter_by(group_name=request.form['search']).all()
-        page = request.args.get(get_page_parameter(), type=int, default=1)
-        pagination = Pagination(page=page, total=len(result), per_page=6)       
-        return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
-    
+        return redirect(url_for('group_blueprint.browse_search_groups', searchgroup=request.form['search']))
     result = Group.query.filter_by(public='1').all()
     page = request.args.get(get_page_parameter(), type=int, default=1)
     pagination = Pagination(page=page, total=len(result), per_page=6)
     return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
 
+@group_blueprint.route('/browse_search_groups/<string:searchgroup>')
+def browse_search_groups(searchgroup):
+    result = Group.query.filter_by(group_name=searchgroup).all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination = Pagination(page=page, total=len(result), per_page=6)       
+    return render_template('./group/browse_search_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
 
 @group_blueprint.route('/my_groups')
 def my_groups():

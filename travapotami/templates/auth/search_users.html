@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="content-section">
+    <br>
         <h1>Search for friends to give them ratings!</h1>   
         <form action="" method="POST" class="container">
             {{ form.csrf_token }}
@@ -8,23 +9,28 @@
                 {{ form.username }}
                 <label>{{ form.username.label }}</label>
             </div>
-            <div class="btn waves-effect waves-light">
+            <div class="btn waves-effect waves-light center">
                 {{form.submit()}}
                 <i class="material-icons right">send</i>
             </div>
         </form>
         <br>
         <br>
-        <h2 class="container">See Top 10 ratings of all time in each categories!</h2>
+
+        <h3 class="container center">Take a look at the TOP 10 ratings of all time in each categories!</h3>
+        <br>
         <div class="container">
-            <ul id="top-ratings" class="tabs">
-                <li class="tab col s3"><a class="active" href="#friendliness">Friendliness</a></li>
-                <li class="tab col s3"><a href="#cleanliness">Cleanliness</a></li>
-                <li class="tab col s3"><a href="#timeliness">Timeliness</a></li>
-                <li class="tab col s3"><a href="#foodies">Foodies</a></li>
+            <ul id="top-ratings" class="tabs brown lighten-5 tabs-fixed-width tab-demo z-depth-1">
+                <li class="tab col s4"><a class="active teal-text" href="#friendliness">Friendliness</a></li>
+                <li class="tab col s4"><a class="teal-text"href="#cleanliness">Cleanliness</a></li>
+                <li class="tab col s4"><a class="teal-text"href="#timeliness">Timeliness</a></li>
+                <li class="tab col s4"><a class="teal-text"href="#foodies">Foodies</a></li>
+                <div class="indicator indigo darken-4" ></div>
             </ul>
-            <div id="friendliness" class="col s12 white">
-                <div class="container">
+            
+            <div id="friendliness" class="col s6 grey lighten-3">
+                <div class="container center">
+                    <br>
                     Get friendliness by being nice to your fellow tripmates! Smile, be polite, and have a great time!
                 </div>
                     <table class="responsive-table">
@@ -40,8 +46,9 @@
                     {% endfor %}
                 </table>
             </div>
-            <div id="cleanliness" class="col s12 white">
-                <div class="container">
+            <div id="cleanliness" class="col s6  grey lighten-3">
+                <div class="container center">
+                    <br>
                     People will base your cleanliness on your hygiene and messiness. Be sure to take care of yourself!
                 </div>
                 <table class="responsive-table">
@@ -57,9 +64,10 @@
                     {% endfor %}
                 </table>
             </div>
-            <div id="timeliness" class="col s12 white">
-                <div class="container">
-                    Don't keep your mates waiting! Everyone is excited to be on this trip. Make sure everyone has a wortwhwile time
+            <div id="timeliness" class="col s6 grey lighten-3">
+                <div class="container center">
+                    <br>
+                    Don't keep your mates waiting! Everyone is excited to be on this trip. Make sure everyone has a worthwhile time
                     together!
                 </div>
                 <table class="responsive-table">
@@ -75,9 +83,10 @@
                     {% endfor %}
                 </table>
             </div>
-            <div id="foodies" class="col s12 white">
-                <div class="container">
-                    Food.
+            <div id="foodies" class="col s6 grey lighten-3">
+                <div class="container center">
+                    <br>
+                    Rate your friends know if they are a foodie :) If one of your main goal for travelling is to try out all the good foods out there, let others know!
                 </div>
                 <table class="responsive-table">
                     {% for user in food_users %}
