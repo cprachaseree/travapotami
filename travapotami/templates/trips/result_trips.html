@@ -1,73 +1,82 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<div class="content-section">
     <br>
-    {%if result%}
-    <h3>Here are all your trips!</h3>
+    <div class="container">
+        {%if result%}
+        {{ pagination.info }}
 
-    {%for trip in result%}
-    <div class="row">
-        <div class="col s12 m4">
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
-                    <img class="activator"
-                        src="https://lipis.github.io/flag-icon-css/flags/4x3/{{ trip.destination.lower() }}.svg" width="200"
-                        height="200" style="margin:40px 0px 0px 0px">
-                </div>
-                <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">{{trip['destination']}}<i
-                            class="material-icons right">more_vert</i></span>
-                    <p><a href="{{url_for('trips_blueprint.display_trip', tripid=trip.id)}}">Check out your trip
-                            to {{trip['destination']}} on {{trip['date_from']}}</a></p>
-                </div>
-                <div class="card-reveal teal lighten-5">
-                    <span class="card-title grey-text text-darken-4">{{ trip.destination }}<i
-                            class="material-icons right">close</i></span>
-                    <p>{{ trip.description }}</p>
-                    
-                    {% if trip in mytrips %}
+        {%for i in range(0, 3)%}
+        {% if loop.index+(page-1)*per_page <= result|length %}
+        <div class="row">
+
+            <div class="col s12 m4">
+                <div class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img class="activator"
+                            src="https://lipis.github.io/flag-icon-css/flags/4x3/{{ result[loop.index+(page-1)*per_page-1].destination.lower() }}.svg"
+                            width="200" height="200" style="margin:40px 0px 0px 0px">
+                    </div>
+                    <div class="card-content">
+                        <span
+                            class="card-title activator grey-text text-darken-4">{{result[loop.index+(page-1)*per_page-1]['destination']}}<i
+                                class="material-icons right">more_vert</i></span>
+                        <p><a
+                                href="{{url_for('trips_blueprint.display_trip', tripid=result[loop.index+(page-1)*per_page-1].id)}}">Check
+                                out your trip
+                                to {{result[loop.index+(page-1)*per_page-1]['destination']}} on
+                                {{result[loop.index+(page-1)*per_page-1]['date_from']}}</a></p>
+                    </div>
+                    <div class="card-reveal teal lighten-5">
+                        <span
+                            class="card-title grey-text text-darken-4">{{ result[loop.index+(page-1)*per_page-1].destination }}
+                            <i>class="material-icons right">close</i>
+                        </span>
+                        <p>{{ result[loop.index+(page-1)*per_page-1].description }}</p>
+
+                        {% if result[loop.index+(page-1)*per_page-1] in mytrips %}
                         <p><i>You are already in this trip!</i></p>
-                    {% else %}
-                        <!-- TODO let this user join trip -->
-                        <!--Maybe do something else if this user is pending to join-->
-                        {% if current_user in trip.pending_participants %}
-                            <p><i>You have already requested to join this trip!</i></p>
+                        {% else %}
+                        {% if current_user in result[loop.index+(page-1)*per_page-1].pending_participants %}
+                        <p><i>You have already requested to join this trip!</i></p>
                         {% else %}
                         <div class="btn waves-effect waves-light">
                             <a style="color:black"
-                                href="{{ url_for('trips_blueprint.join_trip', tripid=trip.id) }}">Request To Join
+                                href="{{ url_for('trips_blueprint.join_trip', tripid=result[loop.index+(page-1)*per_page-1].id) }}">Request
+                                To Join
                                 <i style="color: white" class="material-icons right">add</i>
                             </a>
                         </div>
                         {% endif %}
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
+
             </div>
+            {% endif %}
+            {%endfor%}
+
         </div>
-        {%endfor%}
+        <ul class="pagination center">
+            {{ pagination.links }}
+        </ul>
 
+        {%endif%}
+
+        {%if not result%}
+        <div>
+            <br>
+            <h2>No results. Try creating a trip!</h2>
+        </div>
+        {%endif%}
     </div>
-
-    <ul class="pagination center">
-        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-        <li class="active teal"><a href="#!">1</a></li>
-        <li class="waves-effect"><a href="#!">2</a></li>
-        <li class="waves-effect"><a href="#!">3</a></li>
-        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
-    </ul>
-    {%endif%}
-
-    {%if not result%}
-    <div>
-        <br>
-        <h2>You don't have any trips yet! Do you want to join one now?</h2>
-        <a href="{{  url_for('trips_blueprint.search_trips')  }}" class="col s4 btn-large" style="center"
-            data-position="bottom" data-tooltip="Search for trips!">Join a Trip</a>
-    </div>
-    {%endif%}
 
 </div>
 
-
-
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>
 {% endblock content %}
