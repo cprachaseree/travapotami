@@ -14,8 +14,93 @@
             </div>
         </form>
         <br>
-
+        <br>
+        <h2 class="container">See Top 10 ratings of all time in each categories!</h2>
+        <div class="container">
+            <ul id="top-ratings" class="tabs">
+                <li class="tab col s3"><a class="active" href="#friendliness">Friendliness</a></li>
+                <li class="tab col s3"><a href="#cleanliness">Cleanliness</a></li>
+                <li class="tab col s3"><a href="#timeliness">Timeliness</a></li>
+                <li class="tab col s3"><a href="#foodies">Foodies</a></li>
+            </ul>
+            <div id="friendliness" class="col s12 white">
+                <div class="container">
+                    Get friendliness by being nice to your fellow tripmates! Smile, be polite, and have a great time!
+                </div>
+                    <table class="responsive-table">
+                    {% for user in friendly_users %}
+                    <tr>
+                        <th>
+                            <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
+                                {{ user.username }}
+                            </a>
+                        </th>
+                        <td>{{ user.rating.friendliness }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div id="cleanliness" class="col s12 white">
+                <div class="container">
+                    People will base your cleanliness on your hygiene and messiness. Be sure to take care of yourself!
+                </div>
+                <table class="responsive-table">
+                    {% for user in clean_users %}
+                    <tr>
+                        <th>
+                            <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
+                                {{ user.username }}
+                            </a>
+                        </th>
+                        <td>{{ user.rating.cleanliness }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div id="timeliness" class="col s12 white">
+                <div class="container">
+                    Don't keep your mates waiting! Everyone is excited to be on this trip. Make sure everyone has a wortwhwile time
+                    together!
+                </div>
+                <table class="responsive-table">
+                    {% for user in timely_users %}
+                    <tr>
+                        <th>
+                            <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
+                                {{ user.username }}
+                            </a>
+                        </th>
+                        <td>{{ user.rating.timeliness }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div id="foodies" class="col s12 white">
+                <div class="container">
+                    Food.
+                </div>
+                <table class="responsive-table">
+                    {% for user in food_users %}
+                    <tr>
+                        <th>
+                            <a href="{{url_for('auth_blueprint.display_account', username=user.username)}}">
+                                {{ user.username }}
+                            </a>
+                        </th>
+                        <td>{{ user.rating.foodies }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        
     </div>
     <br>
 </div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#top-ratings').tabs();
+    });
+</script>
 {% endblock content %}
