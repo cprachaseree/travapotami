@@ -258,20 +258,23 @@ def result_trips(destination, max_budget, triptype):
 
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
-    form = SearchTripsForm()
-    if request.method == 'POST':
-        if form.max_budget.data != None and not isinstance(float(form.max_budget.data), float) and not isinstance(int(form.max_budget.data), int):
-            flash("Max budget should be decimal.")
-        else:
-            trip_types = list_to_string(form.triptype.data)
-            if form.max_budget.data == None:
-                form.max_budget.data = "None"
-            if trip_types == None:
-                trip_types = "None"
-            max_budget = str(form.max_budget.data)
-            return redirect(url_for('trips_blueprint.result_trips', destination=form.destination.data, max_budget=max_budget, triptype=trip_types))
-    return render_template('./trips/search_trips.html', title='Search Trip', form=form)
-
+    if current_user.is_authenticated:
+        form = SearchTripsForm()
+        if request.method == 'POST':
+            if form.max_budget.data != None and not isinstance(float(form.max_budget.data), float) and not isinstance(int(form.max_budget.data), int):
+                flash("Max budget should be decimal.")
+            else:
+                trip_types = list_to_string(form.triptype.data)
+                if form.max_budget.data == None:
+                    form.max_budget.data = "None"
+                if trip_types == None:
+                    trip_types = "None"
+                max_budget = str(form.max_budget.data)
+                return redirect(url_for('trips_blueprint.result_trips', destination=form.destination.data, max_budget=max_budget, triptype=trip_types))
+        return render_template('./trips/search_trips.html', title='Search Trip', form=form)
+    else:
+        flash("Login first please!")
+        return redirect(url_for('auth_blueprint.login'))
 
 @trips_blueprint.route('/create_group_trip/<string:group>', methods=['GET', 'POST'])
 def create_group_trip(group):
