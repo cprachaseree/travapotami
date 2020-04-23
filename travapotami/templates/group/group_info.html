@@ -2,32 +2,59 @@
 {% block content %}
 <div class="content-section">
     <h1>About Group {{ group.group_name }}</h1>
-    <div class="container">
-        <br>
-        <p>Group Details</p>
-        <table class="responsive-table">
+    <div class="container center">
+        <h3> {{ group.description }} </h3> 
+
+        {% if group.icon == 1 %}
+            <img class="responsive-img" src="../../static/img/travapotami6.png" width=30%>
+        {% elif group.icon == 2 %}
+            <img class="responsive-img" src="../../static/img/potami3.png"  width=15%>
+        {% elif group.icon == 3 %}
+            <img class="responsive-img" src="../../static/img/potami2.jpg" width=15%>
+        {% endif %}
+
+        <table class="highlight centered">
             <tr>
                 <th>Number of Members</th>
                 <td>{{ group.mates|length+1 }}</td>
             </tr>
             <tr>
                 <th>Admin</th>
-                <td>{{ group.admins[0].username }}</td>
+                <td>
+                    <a href="{{ url_for('auth_blueprint.display_account', username=group.admins[0].username) }}">
+                    {{ group.admins[0].username }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>Mates</th>
                 <td>
-                    {%for i in range(0, group.mates|length)%}
-                    {{ group.mates[i].username }}
-                    {{ "&nbsp;"|safe*5 }}
-                    {%endfor%}
+                    <table>
+                        {%for i in range(0, group.mates|length)%}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('auth_blueprint.display_account', username=group.mates[i].username) }}">
+                                    {{ group.mates[i].username }}
+                                </a>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </table>
+
                 </td>
-            </tr>
         </table>
     
+
+        <h3> Group Trips </h3>
         <br>
         {% if is_admin == True %}
         <p>To add new member(s), please press edit group.</p>
+
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('trips_blueprint.create_group_trip', group=group)  }}">Create Group Trip</a>
+            <i class="material-icons right">add</i>
+        </div>
+
         <div class="btn waves-effect waves-light">
             <a style="color:white" href="{{  url_for('group_blueprint.edit_group', group=group)  }}">Edit Group Details</a>
             <i class="material-icons right">edit</i>
@@ -39,19 +66,29 @@
         </div>
         {%endif%}
 
-        {% if is_admin == False %}
+        {% if is_admin == False and is_mate== True %}
         <div class="btn waves-effect waves-light">
             <a style="color:white" href="{{  url_for('group_blueprint.leave_group', group=group)  }}">Leave Group</a>
             <i class="material-icons right">exit_to_app</i>
         </div>
         {%endif%}
+
+        {% if is_admin == False and is_mate== False %}
+        <div class="btn waves-effect waves-light">
+            <a style="color:white" href="{{  url_for('group_blueprint.join_group', groupnum=group)  }}">Join Group</a>
+            <i class="material-icons right">exit_to_app</i>
+        </div>
+        {%endif%}
     </div>
 
-
-    
+    <br>
 </div>
 
 
-
+<script>
+    $(document).ready(function(){
+        $('.materialboxed').materialbox();
+    });
+</script>
 
 {% endblock content %}

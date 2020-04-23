@@ -10,7 +10,11 @@
         {% for i in range(0, result|length) %}
             <li class="collection-item avatar">
             <i class="material-icons circle teal">face</i>
-            <span class="title"  style="font-weight:bold">{{ result[i].group_name }}</span>
+            <span class="title"  style="font-weight:bold">
+                <a href="{{  url_for('group_blueprint.group_info', group=result[i])  }}" >
+                {{ result[i].group_name }}
+                </a>
+            </span>
             <p>
                 Group Description: {{ result[i].description }}
                 <br>

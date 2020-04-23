@@ -8,16 +8,44 @@
     <h3>Click on the card to reveal more infomation.</h3>
     {{ pagination.info }}
 
+
+    <div class="nav-wrapper">
+        <form class="col s12" action="" method="POST">
+          <div class="input-field row">
+            <div class="input-field col s6">
+                <input name="search" id="search" type="search" required>
+                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+            </div>
+            <div class="input-field col s6">
+                <button class="btn waves-effect waves-light" type="submit">
+                    <i class="material-icons">send</i>
+                </button>
+            </div>
+          </div>
+
+        </form>
+    </div>
+
     <div class="row">
     {%for i in range(0, 6)%} 
         <div class="col s12 m4">
             {% if loop.index+(page-1)*per_page <= result|length %}
                 <div class="card">
                     <div class="card-image waves-effect waves-block waves-light">
-                        <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
+                        {% if result[loop.index+(page-1)*per_page-1].icon == 1 %}
+                            <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
+                        {% elif result[loop.index+(page-1)*per_page-1].icon == 2 %}
+                            <img class="activator" src="../../static/img/potami3.png">
+                        {% else %}
+                            <img class="activator" src="../../static/img/potami2.jpg" width=15%>
+                        {% endif %}
                     </div>
                     <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4"> {{ result[loop.index+(page-1)*per_page-1].group_name }}<i class="material-icons right">more_vert</i></span>
+                        <span class="card-title activator grey-text text-darken-4"> 
+                            <a href="{{  url_for('group_blueprint.group_info', group=result[loop.index+(page-1)*per_page-1])  }}">
+                            {{ result[loop.index+(page-1)*per_page-1].group_name }}
+                            </a>
+                            <i class="material-icons right">more_vert</i></span>
                         <p>
                             <!-- Modal Trigger -->
                             <a class="waves-effect waves-light btn modal-trigger" href="#modal{{loop.index+(page-1)*per_page-1}}">Join<i class="material-icons small right">group_add</a></i>

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, request, url_for,
 from flask_login import current_user
 from .forms import TripForm, SearchTripsForm, UpdateTrip, AddHostParticipant
 from datetime import date, datetime, timedelta
-from .models import db, Trip, User
+from .models import db, Trip, User, Group
 import pycountry
 import sys
 trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
@@ -259,3 +259,48 @@ def search_trips():
             flash(f"{i}: {e}")
     return render_template('./trips/search_trips.html', title='Search Trip', form=form)
 
+
+@trips_blueprint.route('/create_group_trip/<string:group>', methods=['GET', 'POST'])
+def create_group_trip(group):
+    flash(group)
+    group = int(''.join(filter(str.isdigit, group)))
+    group = Group.query.get(group)
+       
+    form = TripForm()
+    if form.validate_on_submit():
+        start_month = str(form.datebegin.data)[5:7]
+        start_day = str(form.datebegin.data)[8:]
+        start_year = str(form.datebegin.data)[:4]
+        end_month = str(form.dateend.data)[5:7]
+        end_day = str(form.dateend.data)[8:]
+        end_year = str(form.dateend.data)[:4]
+        d0 = date(int(start_year), int(start_month), int(start_day))
+        d1 = date(int(end_year), int(end_month), int(end_day))
+        delta = d1 - d0
+        trip_types = list_to_string(form.triptype.data)
+        
+        trip = Trip(hosts=[current_user],
+                    destination=form.destination.data,
+                    budget_max=form.max_budget.data,
+                    date_from=form.datebegin.data,
+                    date_to=form.dateend.data,
+                    description=form.description.data,
+                    # date_from=datetime.combine(form.datebegin.data, time()),
+                    # date_to=datetime.combine(form.dateend.data, time()),
+                    length=timedelta(days=delta.days),
+                    trip_type=trip_types
+                    )
+        db.session.add(trip)
+
+        to_add = []
+        for user in group.mates: 
+            user = User.query.filter_by(username=user.username).first()
+            to_add.append(user)
+            flash(f"{user.username} added")
+        
+        trip.participants = to_add          
+        db.session.commit()
+        flash("Successfully created trip!")
+        return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
+
+    return render_template('./trips/create_group_trip.html', title='Create Group Trip', group=group, form=form)

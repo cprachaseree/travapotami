@@ -17,6 +17,9 @@ def create_group():
             group_name = request.form['groupname']
             public = request.form.get('accessibility')
             description = request.form['group-description']
+            icon = request.form['icon']
+            flash(icon)
+
             if public:
                 public = True
                 flash("Public Group")
@@ -33,7 +36,8 @@ def create_group():
 
             group = Group( group_name = group_name,
                             public = public,
-                            description = description
+                            description = description,
+                            icon = icon
             )
             db.session.add(group)
             db.session.commit()
@@ -70,7 +74,12 @@ def group_info(group):
         is_admin = True
     else:
         is_admin = False
-    return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin)
+    
+    if current_user in searchgroup.mates:
+        is_mate = True
+    else:
+        is_mate = False
+    return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin, is_mate=is_mate)
 
 @group_blueprint.route('/edit_group/<string:group>',  methods=['GET', 'POST'])
 def edit_group(group):
@@ -81,23 +90,23 @@ def edit_group(group):
         group_name = request.form['groupname']
         public = request.form.get('accessibility')
         description = request.form['group-description']
+        icon = request.form['icon']
+
         if public:
             public = True
-            flash("Public Group")
         else:
             public = False
-            flash("Private Group")
         usernames = []
 
         for x in request.form:
             if x == "groupname" or x == "group-description" or not request.form[x] or request.form[x] == 'on':
                 continue
             usernames.append(request.form[x])
-        flash(usernames)
         
         group.group_name = group_name
         group.public = public
         group.description = description
+        group.icon = icon
 
         to_add = []
         group_search = Group.query.filter_by(id=groupnum).first()
@@ -105,29 +114,31 @@ def edit_group(group):
             user_search = User.query.filter_by(username=username).first()
             if user_search != None:
                 if not user_search in group_search.mates or not user_search in group_search.admins:
-                    flash(user_search.username)
                     to_add.append(user_search)
                     flash(f"{user_search.username} added to group")
                 else:
                     flash(f"{user_search.username} already in group!")
         group.mates = to_add
-        flash(f"{group_name} is edited to {len(to_add)+1} member(s).")
         db.session.commit()
+        flash("Your group is edited")
 
         return redirect(url_for('group_blueprint.my_groups'))
     return render_template('./group/edit_group.html', title='Edit Group', group=group)
 
-@group_blueprint.route('/browse_groups')
+@group_blueprint.route('/browse_groups', methods=['GET', 'POST'])
 def browse_groups():
+    if request.method == 'POST':
+        flash(request.form['search'])
+        result = Group.query.filter_by(group_name=request.form['search']).all()
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        pagination = Pagination(page=page, total=len(result), per_page=6)       
+        return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
+    
     result = Group.query.filter_by(public='1').all()
     page = request.args.get(get_page_parameter(), type=int, default=1)
     pagination = Pagination(page=page, total=len(result), per_page=6)
     return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
 
-@group_blueprint.route('/search_groups')
-def search_groups():
-
-    return render_template('./group/search_groups.html', title='Search Groups')
 
 @group_blueprint.route('/my_groups')
 def my_groups():
