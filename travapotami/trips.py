@@ -275,7 +275,6 @@ def search_trips():
 
 @trips_blueprint.route('/create_group_trip/<string:group>', methods=['GET', 'POST'])
 def create_group_trip(group):
-    flash(group)
     group = int(''.join(filter(str.isdigit, group)))
     group = Group.query.get(group)
        
