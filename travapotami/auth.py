@@ -47,7 +47,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
-            return redirect(url_for('auth_blueprint.login'))
+            return redirect(url_for('auth_blueprint.login', current_user=None))
     if form.errors:
         for i, e in form.errors.items():
             flash(e[0])
