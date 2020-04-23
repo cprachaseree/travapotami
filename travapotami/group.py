@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import current_user
-from .models import db, Group, User
+from .models import db, Group, User, Trip
 from flask_paginate import Pagination, get_page_parameter
 from sqlalchemy import or_, and_
 
@@ -79,6 +79,7 @@ def group_info(group):
         is_mate = True
     else:
         is_mate = False
+
     return render_template('./group/group_info.html', title='Group Info', group=group, is_admin=is_admin, is_mate=is_mate)
 
 @group_blueprint.route('/edit_group/<string:group>',  methods=['GET', 'POST'])

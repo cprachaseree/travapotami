@@ -33,11 +33,11 @@
                 <div class="card">
                     <div class="card-image waves-effect waves-block waves-light">
                         {% if result[loop.index+(page-1)*per_page-1].icon == 1 %}
-                            <img class="activator" src="../../static/img/travapotami6.png" width="200" height="200">
+                            <img class="activator" src="../../static/img/travapotami6.png" width="200" height="250">
                         {% elif result[loop.index+(page-1)*per_page-1].icon == 2 %}
-                            <img class="activator" src="../../static/img/potami3.png">
+                            <img class="activator" src="../../static/img/potami3.png" width="200" height="250" >
                         {% else %}
-                            <img class="activator" src="../../static/img/potami2.jpg" width=15%>
+                            <img class="activator" src="../../static/img/potami2.jpg" width="200" height="250">
                         {% endif %}
                     </div>
                     <div class="card-content">
@@ -79,7 +79,7 @@
 
     <ul class="pagination center">
         {{ pagination.links }}
-      </ul>
+    </ul>
           
 
 </div>
