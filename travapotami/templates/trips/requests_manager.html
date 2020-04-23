@@ -11,7 +11,7 @@
                 <tr>
                     <th>{{x.username}}</th>
                     <td><a href="{{url_for('trips_blueprint.participant_approve',tripid=trip.id, userid=x.id)}}" class="btn-small">Approve</a>
-                    <a class="btn-small">Reject</a></td>
+                    <a href="{{url_for('trips_blueprint.participant_reject',tripid=trip.id, userid=x.id)}}" class="btn-small">Reject</a></td>
                 </tr>
                 {%endfor%}
             {%endif%}

@@ -105,7 +105,7 @@ def participant_approve(tripid, userid):
     trip.pending_participants.remove(user)
     trip.participants.append(user)
     db.session.commit()
-    flash(user.username + 'is added to participants!')
+    flash(user.username + ' is added to participants!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])
@@ -114,7 +114,7 @@ def participant_reject(tripid, userid):
     user = User.query.filter_by(id=userid).first()
     trip.pending_participants.remove(user)
     db.session.commit()
-    flash(user.name + 'is rejected!')
+    flash(user.username + ' is rejected!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
 @trips_blueprint.route('/trip/<int:tripid>/remove_participant/<int:userid>', methods=['GET'])
