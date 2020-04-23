@@ -241,11 +241,13 @@ def result_trips(destination, max_budget, triptype):
             Trip.destination == destination
         )
     result = result.all()
+    for r in result:
+        r.country = pycountry.countries.get(alpha_2=r.destination).name
     t1 = Trip.query.filter(Trip.hosts.contains(current_user)).all()
     t2 = Trip.query.filter(
         Trip.participants.contains(current_user)).all()
     mytrips = list(set(t1) | set(t2))
-    page = page = request.args.get(get_page_parameter(), type=int, default=1)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
     pagination = Pagination(page=page, total=len(result), per_page=3)
     if result:
         flash("Viewing result trips.")
