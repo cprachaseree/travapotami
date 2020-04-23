@@ -19,8 +19,8 @@
                     </div>
                     <div class="card-content">
                         <span
-                            class="card-title activator grey-text text-darken-4">{{result[loop.index+(page-1)*per_page-1]['destination']}}<i
-                                class="material-icons right">more_vert</i></span>
+                            class="card-title activator grey-text text-darken-4">{{result[loop.index+(page-1)*per_page-1]['destination']}}
+                            <i class="material-icons right">more_vert</i></span>
                         <p><a
                                 href="{{url_for('trips_blueprint.display_trip', tripid=result[loop.index+(page-1)*per_page-1].id)}}">Check
                                 out your trip
@@ -30,7 +30,7 @@
                     <div class="card-reveal teal lighten-5">
                         <span
                             class="card-title grey-text text-darken-4">{{ result[loop.index+(page-1)*per_page-1].destination }}
-                            <i>class="material-icons right">close</i>
+                            <i class="material-icons right">close</i>
                         </span>
                         <p>{{ result[loop.index+(page-1)*per_page-1].description }}</p>
 
