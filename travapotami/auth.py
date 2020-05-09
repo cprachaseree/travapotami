@@ -1,3 +1,12 @@
+'''
+    AUTHENTIFICATION MODULE: Module to process user related functions
+    PROGRAMMER: Chaiyasait Prachaseree
+    CALLING SEQUENCE: User or admin on click and on submit to the respective routes
+    WHEN: Version 1 written 09-05-2020
+    PURPOSE: This module aims to process user form inputs and user clicks 
+             to the corresponding urls and return a redirect to the correct URL
+'''
+
 from base64 import b64encode
 from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, UpdateAccountInfo, SearchUsersForm, UpdateImage, GiveRatings, NewPassword
 from flask import Blueprint, render_template, redirect, url_for, request, flash
@@ -6,7 +15,17 @@ auth_blueprint = Blueprint('auth_blueprint', __name__)
 from . import bcrypt, login_manager
 from .models import db, User, Rating
 
-# Registration page
+'''
+    REGISTER: This function receives user input for new authentication information and validates it.
+              Will return a redirect to login if correct or prompt error on error
+    CALLING SEQUENCE: This route is accessed when user clicks register button.
+                      form validation will be ran when user posts their inputs.
+    PURPOSE: To be used when user wants to create an account to use the web application.
+    DATA STRUCTURES: Forms to accept user input
+                     Database to query if user exists, and to update
+    AlGORITHM: Validates user input; if form validates hash password then store in database and redirect user
+               to login. Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -31,6 +50,7 @@ def register():
             f = form.photo.data
             f.seek(0)
             data = f.read()
+            # hash the password
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             user = User(username        = form.username.data,
                         email           = form.email.data,
@@ -43,7 +63,6 @@ def register():
                         photo           = data,
                         is_web_admin    = False
             )
-
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered. Redirected to login.")
@@ -53,7 +72,20 @@ def register():
             flash(e[0])
     return render_template('./auth/register.html', title='Register', form=form)
 
-# Login Page
+
+'''
+    LOGIN: This function receives user authenticfication input information and validates it.
+              Will return a redirect to home if correct or prompt error on error
+    CALLING SEQUENCE: This route is accessed when user clicks login button on navbar.
+                      This route is also redirected if user tries to access login only functionalities.
+                      form validation will be ran when user posts their inputs.
+    PURPOSE: To be used when user wants to login their account for the web application.
+    DATA STRUCTURES: Forms to accept user input
+                     Database to query if user exists
+    AlGORITHM: Validates user input; if form validates check password.
+               if password is correct redirect to homepage. 
+               Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -74,7 +106,16 @@ def login():
             flash(e[0])
     return render_template('./auth/login.html', title='Login', form=form)
 
-# Logout
+
+'''
+    LOGOUT: This function logs the user out
+    CALLING SEQUENCE: This route is accessed when user logout when user is already logged in.
+    PURPOSE: To be used when user wants to logout the web application.
+    DATA STRUCTURES: None
+    AlGORITHM: Check if user is logged in. If not, return.
+               Otherwise, logout user using function provided by flask_login
+               flash message and redirect to homepage.
+'''
 @auth_blueprint.route('/logout')
 @login_required
 def logout():
@@ -82,7 +123,18 @@ def logout():
     flash("Logged out. Redirected to home page.")
     return redirect(url_for('main_blueprint.home'))
 
-# Forget Password
+
+'''
+    FORGET PASSWORD: This function receives user email and passport to make new password for user
+    CALLING SEQUENCE: This route is accessed when user clicks forgot password link.
+                      form validation will be ran when user posts their inputs.
+    PURPOSE: To be used when user forgets their credentials to use the web application.
+    DATA STRUCTURES: Forms to accept user input
+                     Database to query if user exists
+    AlGORITHM: Validates user email and passport number;
+               if form validates redirect the new password form
+               Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/forgetpassword', methods=['GET', 'POST'])
 def forgetpassword():
     form = ForgotPasswordForm()
@@ -99,6 +151,17 @@ def forgetpassword():
     return render_template('./auth/forgot_password.html', title='Forget Password', form=form)
 
 
+'''
+    NEW PASSWORD: This function receives user input for new authentication information and validates it.
+              Will return a redirect to login if correct or prompt error on error
+    CALLING SEQUENCE: This route is accessed when user has already clicked forgot password.
+    PURPOSE: To be used when user wants to create a new password after forgetting their account.
+    DATA STRUCTURES: Forms to accept user input
+                     Database to query if user exists, and to update
+    AlGORITHM: Validates user input; if form validates hash password then store in database and redirect user
+               to login. Otherwise, flash error message of corresponding error. 
+'''
+
 @auth_blueprint.route('/new_password/<string:username>',  methods=['GET', 'POST'])
 def new_password(username):
     form = NewPassword()
@@ -110,7 +173,16 @@ def new_password(username):
         return redirect(url_for('auth_blueprint.login'))
     return render_template('./auth/new_password.html', title='New Password', form=form)
 
-# Edit user information
+
+'''
+    EDIT ACCOUNT: This function receives user input for new authentication information and validates it.
+              Will return a redirect to login if correct or prompt error on error
+    CALLING SEQUENCE: This route is accessed when user clicks my profile then edit account.
+    PURPOSE: To be used when user wants to  edit their account.
+    DATA STRUCTURES: Forms to accept user input
+    AlGORITHM: Validates user input; if form validates then store in database and redirect user
+               view their profile. Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/edit_account', methods=['GET', 'POST'])
 @login_required
 def edit_account():
@@ -145,6 +217,15 @@ def edit_account():
     return render_template('./auth/edit_account.html', title="Update Account",  form=form)
 
 
+'''
+    UPDATE PHOTO: This function receives new user profile photo and updates it
+    CALLING SEQUENCE: This route is accessed when user clicks update photo button.
+    PURPOSE: To be used when user wants to update their profile photo.
+    DATA STRUCTURES: Forms to accept user photo
+                     Database to query if user exists, and to update
+    AlGORITHM: Validates user input; if form validates then store in database and redirect user
+               view their profile. Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/update_photo', methods=['GET', 'POST'])
 @login_required
 def update_photo():
@@ -161,7 +242,17 @@ def update_photo():
         return redirect(url_for('auth_blueprint.display_account', title="View User Profile", username=current_user.username, is_current=True, image=image))
     return render_template('./auth/update_photo.html', title="Update Photo", form=form, image=image)
 
-# display user
+
+'''
+    VIEW USER: This function receives usernameand views the profile
+    CALLING SEQUENCE: This route is accessed when user searches a username.
+                      Username is a string that is being searched. 
+    PURPOSE: To be used when user wants to view their own or other people's profile.
+    DATA STRUCTURES: Database to query if user exists, and get their information
+    AlGORITHM: Check if username exists. If not, how no user exist.
+               Otherwise, check if the profile is the account currently logged in.
+               If yes, show edit profile options. 
+'''
 @auth_blueprint.route('/user/<string:username>', methods=['GET'])
 def display_account(username):
     user = User.query.filter_by(username=username).first()
@@ -175,6 +266,18 @@ def display_account(username):
     gender = gender.split(".")[1]
     return render_template('./auth/display_account.html', title="View User Profile", user=user, is_current=is_current, image=image, gender=gender)
 
+
+'''
+    SEARCH USERS: This function receives username and checks if it exists
+                  Also lists top rated users
+    CALLING SEQUENCE: This route is accessed when user clicks find friends tab.
+    PURPOSE: To be used when user wants to view other users.
+    DATA STRUCTURES: Forms to accept user input username
+                     Database to query if user exists
+    AlGORITHM: Validates user input; Check if user exists. if user exists
+               redirect to profile. Otherwise flash error message. 
+    .          List top ranked ratings from database.
+'''
 @auth_blueprint.route('/search_users', methods=['GET', 'POST'])
 def search_users():
     form = SearchUsersForm()
@@ -197,6 +300,18 @@ def search_users():
     return render_template('./auth/search_users.html', title="Search Users", form=form, friendly_users=friendly_users, clean_users=clean_users, timely_users=timely_users, food_users=food_users)
 
 
+'''
+    RATE USERNAME: This function allows users the rate other users
+    CALLING SEQUENCE: This route is accessed when user clicks rate user button of the
+                      corresponding user's profile.
+                      username is string in url to check which username is being rated.
+    PURPOSE: To be used when user wants to give ratings to other users.
+    DATA STRUCTURES: Forms to accept user ratings
+                     Database to query if user exists, and to update
+    AlGORITHM: Validates user input; if form validates then calculate new rating average;
+               store in database; then redirect user to  profile. 
+               Otherwise, flash error message of corresponding error. 
+'''
 @auth_blueprint.route('/rate_user/<string:username>', methods=['GET', 'POST'])
 @login_required
 def rate_user(username):
