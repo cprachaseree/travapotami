@@ -249,7 +249,7 @@ def update_photo():
                       Username is a string that is being searched. 
     PURPOSE: To be used when user wants to view their own or other people's profile.
     DATA STRUCTURES: Database to query if user exists, and get their information
-    AlGORITHM: Check if username exists. If not, how no user exist.
+    AlGORITHM: Check if username exists. If not, show no user exists.
                Otherwise, check if the profile is the account currently logged in.
                If yes, show edit profile options. 
 '''

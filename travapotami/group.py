@@ -170,10 +170,10 @@ def edit_group(group):
     return render_template('./group/edit_group.html', title='Edit Group', group=group)
 
 '''
-    BROWSE_GROUP: This function displays all public groups in the database
+    BROWSE_GROUPS: This function displays all public groups in the database
     CALLING SEQUENCE: This route is accessed when user clicks to "Browse Groups" in the group main page.
     DATA STRUCTURES: Database - to query existing groups
-    ALGORITHM: Searches for all the public groups the in the database. Uses pagination function to 
+    ALGORITHM: Searches for all the public groups in the database. Uses pagination function to 
                 divide the search result into different pages, with 6 per page.
 '''
 @group_blueprint.route('/browse_groups', methods=['GET', 'POST'])
@@ -186,10 +186,10 @@ def browse_groups():
     return render_template('./group/browse_groups.html', title='Browse Groups', result=result, pagination=pagination, page=page, per_page=6)
 
 '''
-    BROWSE_SEARCH_GROUP: This function displays all user input group name in the database
+    BROWSE_SEARCH_GROUPS: This function displays all user input group name in the database
     CALLING SEQUENCE: This route is accessed when user searches in "Browse Groups".
     DATA STRUCTURES: Database - to query existing groups
-    ALGORITHM: Searches for all the corresponding group name the in the database. Uses pagination function to 
+    ALGORITHM: Searches for all the corresponding groups the in the database. Uses pagination function to 
                 divide the search result into different pages, with 6 per page.
 '''
 @group_blueprint.route('/browse_search_groups/<string:searchgroup>')
