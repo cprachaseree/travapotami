@@ -176,28 +176,6 @@ def edit_trip(tripid):
     form = UpdateTrip()
 
     if form.validate_on_submit():
-    #     if form.participants:
-    #         usernames = str(form.participants.data).split(',')
-    #         participants = []
-    #         for x in usernames:
-    #             user1 = User.query.filter_by(username=x).first()
-    #             if user1:
-    #                 participants.append(user1)
-    #                 flash(str(x) + 'added to the trip')
-    #             else:
-    #                 flash(str(x) + 'does not exist')
-    #         trip.participants = participants
-    #     if form.participantsremoved:
-    #         usernames = str(form.participants.data).split(',')
-    #         for x in usernames:
-    #             user1 = User.query.filter_by(username=x).first()
-    #             if user1:
-    #                 participanttrips = Trip.query.filter(Trip.participants.contains(user1)).all()  # list of trips
-    #                 hostingtrips = Trip.query.filter_by(Trip.hosts.contains(user1)).all()  # list of trips
-    #                 for y in hostingtrips:
-    #                     y.hosts.remove(user1)
-    #                 for y in participanttrips:
-    #                     y.participants.remove(user1)
         trip.destination = form.destination.data
         trip.description = form.description.data
         trip.date_from = form.datebegin.data
@@ -300,8 +278,6 @@ def create_group_trip(group):
                     date_from=form.datebegin.data,
                     date_to=form.dateend.data,
                     description=form.description.data,
-                    # date_from=datetime.combine(form.datebegin.data, time()),
-                    # date_to=datetime.combine(form.dateend.data, time()),
                     length=timedelta(days=delta.days),
                     trip_type=trip_types
                     )
