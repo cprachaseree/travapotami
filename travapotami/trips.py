@@ -24,7 +24,7 @@ trips_blueprint = Blueprint('trips_blueprint', __name__)
         In this app, it is the field trip_types.
     PURPOSE: To aid the printing of information stored as python list.
     DATA STRUCTURE: Python list and string.
-    ALGORITHM: For each element, insert it and ', 'in to the output string exccept for the last element.
+    ALGORITHM: For each element, insert it and ', 'in to the output string except for the last element.
 '''
 def list_to_string(input):
     if input is None:
@@ -104,7 +104,7 @@ def create_trip():
     ALGORITHM: 
         If user is not authenticated, flash error message and redirect to login page.
         If authenticated, search for trips that user is the host.
-        THen search for trips that user is the participant.
+        Then search for trips that user is the participant.
         Combine the two result and display them.
 '''
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
@@ -151,7 +151,7 @@ def display_trip(tripid):
     DATA STRUCTURE: Database to add the user to request list.
     ALGORITHM: 
         Search the trip from database according to tripid.
-        Add currrent user to the trip's pending participant list.
+        Add current user to the trip's pending participant list.
         Flash success message.
         Display the page for trip tripid.
 '''
@@ -314,7 +314,7 @@ def add_participant(tripid):
 
 '''
     EDIT_TRIP: 
-        This function recieves user input for an existing trip to edit it.
+        This function receives user input for an existing trip to edit it.
         The button to this route is only visible to hosts.
         Will redirect to trip information page if successful.
     CALLING SEQUENCE: This route is access when a host click Edit Trip button from the trip information page.
@@ -404,7 +404,7 @@ def result_trips(destination, max_budget, triptype):
 
 '''
     SEARCH_TRIP: 
-        This function recieves user input as search criterions to pass on to RESULT_TRIP
+        This function receives user input as search criterions to pass on to RESULT_TRIP
     CALLING SEQUENCE: This route is access when a host click Search Trip button from the trip main menu.
     PURPOSE: To let user input search criterions to search trips.
     DATA STRUCTURE:
