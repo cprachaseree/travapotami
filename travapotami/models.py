@@ -1,3 +1,14 @@
+'''
+    MODELS MODULE: Module to define all database (class) definition
+    PROGRAMMER: Chaichon Wongkham
+    CALLING SEQUENCE: 
+        The class definition would be used by SQLALchemy db object to initialize database as well as maintaining rules and restriction.
+        DATABASE MODULES took care of the operation.
+    WHEN: Version 1 written 12-05-2020
+    PURPOSE: 
+        To define all data definition used in the app.
+'''
+
 from .db import get_db
 from enum import Enum
 from datetime import date
@@ -12,7 +23,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# tables needed for many-to-many relationship
+# manually created tables needed for many-to-many relationship
 group_admin = db.Table('group_admin',
                        db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                        db.Column('group_id', db.Integer, db.ForeignKey('group.id'), primary_key=True))
@@ -31,7 +42,6 @@ trip_pending_participant = db.Table('trip_pending_participant',
 
 
 class Gender(Enum):
-
     Male = 1
     Female = 2
     TransMale = 3
@@ -119,5 +129,4 @@ class Trip(db.Model):
 
     def __init__(self, **kwargs):
         super(Trip, self).__init__(**kwargs)
-        #self.length(self.date_to - self.date_from)
         self.finished = False

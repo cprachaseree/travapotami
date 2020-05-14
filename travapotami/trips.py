@@ -1,3 +1,12 @@
+'''
+    TRIPS MODULE: Module to process trips related functions.
+    PROGRAMMER: Chaichon Wongkham, Laura Torralba
+    CALLING SEQUENCE: 
+       User on click and on submit to the respective routes
+    WHEN: Version 1 written 12-05-2020
+    PURPOSE: 
+        This module is to process user buttons clicks for certain functionality or user input of submitted forms regarding Trips.
+'''
 from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app
 from flask_login import current_user
 from .forms import TripForm, SearchTripsForm, UpdateTrip, AddHostParticipant
@@ -6,9 +15,17 @@ from .models import db, Trip, User, Group
 import pycountry
 import sys
 from flask_paginate import Pagination, get_page_parameter
+trips_blueprint = Blueprint('trips_blueprint', __name__)
 
-trips_blueprint = Blueprint('trips_blueprint', __name__)  # making instance ofblueprint
-
+'''
+    LIST_TO_STRING: This function convert a python list of string to one string combining all element with comma-seperated format.
+    CALLING SEQUENCE: 
+        Used whenever a data that stored in list need to be present to the user. 
+        In this app, it is the field trip_types.
+    PURPOSE: To aid the printing of information stored as python list.
+    DATA STRUCTURE: Python list and string.
+    ALGORITHM: For each element, insert it and ', 'in to the output string exccept for the last element.
+'''
 def list_to_string(input):
     if input is None:
         return None
@@ -18,12 +35,30 @@ def list_to_string(input):
             st = st + trip_type + ", "
         else:
             st = st + trip_type
-
+'''
+    CHOOSE_TRIP: This function simply render page Choose Trip.
+    CALLING SEQUENCE: This route is accessed when user click Trip mainmenu.
+    PURPOSE: to register URL (route) to the page.
+'''
 @trips_blueprint.route('/choose_trip')
 def choose_trip():
     return render_template('./trips/choose_trip.html', title='Choose Trip')
 
-
+'''
+    CREATE_TRIP: 
+        This function recieves user input for a new trip to create it.
+        Will redirect to created trip page if successful.
+        The operation will not be allowed if the user is not logged in.
+    CALLING SEQUENCE: This route is access when user click Create Trip from the Trip main menu.
+    PURPOSE: To create a new trip where other users can search for and join.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+        Database to add the newly created trip to the database.
+    ALGORITHM: 
+        If user is not authenticated, flash error message and redirect to login page.
+        If authenticated, display form.
+        After user click submit, use the information from the form to create new trip and redirect to that trip's page.
+'''
 @trips_blueprint.route('/create_trip', methods=['GET', 'POST'])
 def create_trip():
     if not current_user.is_authenticated:
@@ -49,8 +84,6 @@ def create_trip():
                     date_from=form.datebegin.data,
                     date_to=form.dateend.data,
                     description=form.description.data,
-                    # date_from=datetime.combine(form.datebegin.data, time()),
-                    # date_to=datetime.combine(form.dateend.data, time()),
                     length=timedelta(days=delta.days),
                     trip_type=trip_types
                     )
@@ -61,7 +94,19 @@ def create_trip():
         return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
     return render_template('./trips/create_trip.html', title='Create Trip', form=form)
 
-
+'''
+    MY_TRIP: This function displayed all trip related to current user (host or participant)
+    CALLING SEQUENCE: This route is access when user click My Trip from the Trip main menu.
+    PURPOSE: To let all trips related to this user be easily accessible.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+        Database to query the related trips to the database.
+    ALGORITHM: 
+        If user is not authenticated, flash error message and redirect to login page.
+        If authenticated, search for trips that user is the host.
+        THen search for trips that user is the participant.
+        Combine the two result and display them.
+'''
 @trips_blueprint.route('/my_trips', methods=['GET', 'POST'])
 def my_trips():
     if current_user.is_authenticated:
@@ -76,7 +121,19 @@ def my_trips():
         flash("Login first please!")
         return redirect(url_for('auth_blueprint.login'))
 
-
+'''
+    DISPLAY_TRIP: This function displayed the information of a trip.
+    CALLING SEQUENCE: This route is access when user click on a trip from My Trip or Search Trip page.
+    PURPOSE: To display all information of a trip.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+        Database to query the trip to the database.
+    ALGORITHM: 
+        Search the trip from database according to tripid.
+        If current user is host and there are pending participating request, display a notification message.
+        Prepare extra information needed by the template.
+        Display the page for trip tripid.
+'''
 @trips_blueprint.route('/trip/<int:tripid>', methods=['GET', 'POST'])
 def display_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -87,6 +144,17 @@ def display_trip(tripid):
     num_of_hosts = len(trip.hosts)
     return render_template('./trips/display_trip.html', title="Your Trip", trip=trip, destination=destination, imagecode=imagecode, user=current_user, num_of_hosts=num_of_hosts)
 
+'''
+    JOIN_TRIP: This function let a user request to join a trip.
+    CALLING SEQUENCE: This route is access when user click on Request to Join button on a trip information page.
+    PURPOSE: To let user request to join a trip and be approve/reject by hosts.
+    DATA STRUCTURE: Database to add the user to request list.
+    ALGORITHM: 
+        Search the trip from database according to tripid.
+        Add currrent user to the trip's pending participant list.
+        Flash success message.
+        Display the page for trip tripid.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/join_trip', methods=['GET'])
 def join_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -95,11 +163,29 @@ def join_trip(tripid):
     flash('Successfully request to join!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
+'''
+    REQUEST_MANAGER: This function let hosts approve/reject join requests.
+    CALLING SEQUENCE: This route is access when a host click on Approve/Reject Requests button on a trip information page.
+    PURPOSE: To let hosts approve/reject join requests.
+    ALGORITHM: 
+        Search the trip from database according to tripid and return request manager page for that trip.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/request_manager', methods=['GET'])
 def requests_manager(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
     return render_template('./trips/requests_manager.html', title="Manage Requests", trip=trip)
 
+'''
+    PARTICIPANT_APPTOVE: This function let hosts approve a join request.
+    CALLING SEQUENCE: This route is access when a host click on Approve button for a user on a trip request manager page.
+    PURPOSE: To let hosts approve a join request.
+    DATA STRUCTURE: Database to add the user to participant list and remove from request list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and userid.
+        Add that user to the participant list of the trip.
+        Remove that user from the pending participant list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/approve/<int:userid>', methods=['GET'])
 def participant_approve(tripid, userid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -110,6 +196,16 @@ def participant_approve(tripid, userid):
     flash(user.username + ' is added to participants!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
+'''
+    PARTICIPANT_REJECT: This function let hosts reject a join request.
+    CALLING SEQUENCE: This route is access when a host click on Reject button for a user on a trip request manager page.
+    PURPOSE: To let hosts reject a join request.
+    DATA STRUCTURE: Database to remove user from the trip request list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and userid.
+        Remove that user from the trip pending participant list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/request_manager/reject/<int:userid>', methods=['GET'])
 def participant_reject(tripid, userid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -119,6 +215,16 @@ def participant_reject(tripid, userid):
     flash(user.username + ' is rejected!')
     return redirect(url_for('trips_blueprint.requests_manager', tripid=tripid))
 
+'''
+    REMOVE_PARTICIPANT: This function let hosts remove a participant to the trip.
+    CALLING SEQUENCE: This route is access when a host click on Remove button at a user name on a trip information page.
+    PURPOSE: To let hosts remove a participant from a trip.
+    DATA STRUCTURE: Database to remove user from the trip participant list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and userid.
+        Remove that user from the trip participant list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/remove_participant/<int:userid>', methods=['GET'])
 def remove_participant(tripid, userid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -128,6 +234,16 @@ def remove_participant(tripid, userid):
     flash(user.first_name + ' is removed from participants!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
+'''
+    REMOVE_PARTICIPANT: This function let hosts remove a host to the trip.
+    CALLING SEQUENCE: This route is access when a host click on Remove button at a host name on a trip information page.
+    PURPOSE: To let hosts remove a host from a trip.
+    DATA STRUCTURE: Database to remove host from the trip host list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and userid.
+        Remove that user from the trip host list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/remove_host/<int:userid>', methods=['GET'])
 def remove_host(tripid, userid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -137,6 +253,19 @@ def remove_host(tripid, userid):
     flash(user.first_name + ' is removed from hosts!')
     return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
 
+'''
+    ADD_HOST: This function let hosts add a host to the trip.
+    CALLING SEQUENCE: This route is access when a host click on Add button at the host section on a trip information page.
+    PURPOSE: To let hosts add a host to the trip.
+    DATA STRUCTURE:
+        Form to retrieve username input.
+        Database to add host to the trip host list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and submitted username.
+        If user does not exist, flash error message and return.
+        Add that user to the trip host list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/add_host', methods=['GET', 'POST'])
 def add_host(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -153,6 +282,19 @@ def add_host(tripid):
     elif request.method == 'GET':
         return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
+'''
+    ADD_PARTICIPANT: This function let hosts add a participant to the trip.
+    CALLING SEQUENCE: This route is access when a host click on Add button at the participant section on a trip information page.
+    PURPOSE: To let hosts add a participant to the trip.
+    DATA STRUCTURE:
+        Form to retrieve username input.
+        Database to add participant to the trip participant list.
+    ALGORITHM: 
+        Search the trip and user from database according to tripid and submitted username.
+        If user does not exist, flash error message and return.
+        Add that user to the trip participant list.
+        Flash success message.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/add_participant', methods=['GET', 'POST'])
 def add_participant(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -170,6 +312,21 @@ def add_participant(tripid):
     elif request.method == 'GET':
         return render_template('./trips/add_host_participant.html', title='Add a participant', form=form, trip=trip)
 
+'''
+    EDIT_TRIP: 
+        This function recieves user input for an existing trip to edit it.
+        The button to this route is only visible to hosts.
+        Will redirect to trip information page if successful.
+    CALLING SEQUENCE: This route is access when a host click Edit Trip button from the trip information page.
+    PURPOSE: To edit the information of a trip.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+        Database to add the newly created trip to the database.
+    ALGORITHM: 
+        Search for the trip from tripid.
+        If the form is first access, pre-filled the form with existing data.
+        After user click submit, use the information from the form to edit that trip and redirect to that trip's page.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/edit', methods=['GET', 'POST'])
 def edit_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -187,7 +344,6 @@ def edit_trip(tripid):
         return redirect(url_for('trips_blueprint.display_trip', tripid=tripid))
     elif request.method == 'GET':
         form.destination.data = trip.destination
-        # form.participants.data = trip.participants
         form.description.data = trip.description
         form.datebegin.data = trip.date_from
         form.dateend.data = trip.date_to
@@ -195,7 +351,19 @@ def edit_trip(tripid):
         form.triptype.data = trip.trip_type
     return render_template('./trips/edit_trip.html', title='Edit Trip', form=form)
 
-
+'''
+    RESULT_TRIP: 
+        This function return the result of searching trip according to criteria from SEARCH_TRIP function.
+    CALLING SEQUENCE: This route is access when user click submit on the Search Trip form.
+    PURPOSE: To return search result.
+    DATA STRUCTURE:
+        Database to search the trip according to the criteria given in parameters.
+    ALGORITHM: 
+        Search the trip from the database according to the given parameter only.
+        Prepare extra information needed for the template.
+        Flash success message.
+        If no trip is found, flash message.
+'''
 @trips_blueprint.route('/result_trips/<string:destination>/<string:max_budget>/<string:triptype>', methods=['GET'])
 def result_trips(destination, max_budget, triptype):
     if max_budget != "None" and triptype != "None":
@@ -234,6 +402,17 @@ def result_trips(destination, max_budget, triptype):
         return redirect(url_for('trips_blueprint.search_trips'))
     return render_template('./trips/result_trips.html', title='Result Trip', result=result, mytrips=mytrips, page=page, pagination=pagination, per_page=3)
 
+'''
+    SEARCH_TRIP: 
+        This function recieves user input as search criterions to pass on to RESULT_TRIP
+    CALLING SEQUENCE: This route is access when a host click Search Trip button from the trip main menu.
+    PURPOSE: To let user input search criterions to search trips.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+    ALGORITHM: 
+        Flash error and return if user is not login.
+        Do some simple error checking before passing the criterions as parameter to RESULT_TRIP.
+'''
 @trips_blueprint.route('/search_trip', methods=['GET', 'POST'])
 def search_trips():
     if current_user.is_authenticated:
@@ -254,6 +433,21 @@ def search_trips():
         flash("Login first please!")
         return redirect(url_for('auth_blueprint.login'))
 
+'''
+    CREATE_GROUP_TRIP: 
+        This function is the same as CREATE_TRIP but automatically assign all group member to be trip participant and group admin to be trip host.
+    CALLING SEQUENCE: This route is access when user click Create Trip from the group main page.
+    PURPOSE: To create a new trip specifically for a group.
+    DATA STRUCTURE:
+        Forms to retrieve user input.
+        Database to add the newly created trip to the database.
+    ALGORITHM: 
+        If user is not authenticated, flash error message and redirect to login page.
+        If authenticated, display form.
+        After user click submit, use the information from the form to create new trip.
+        Add each group member to this trip participant.
+        Redirect to that trip's information page.
+'''
 @trips_blueprint.route('/create_group_trip/<string:group>', methods=['GET', 'POST'])
 def create_group_trip(group):
     group = int(''.join(filter(str.isdigit, group)))
@@ -300,6 +494,15 @@ def create_group_trip(group):
 
     return render_template('./trips/create_group_trip.html', title='Create Group Trip', group=group, form=form)
 
+'''
+    FINISH_TRIP: This function turn a trip to the finished state.
+    CALLING SEQUENCE: This route is access when a host click finish trip in the trip information page.
+    PURPOSE: To put trip in the finished state.
+    DATA STRUCTURE:
+        Database to change trip's attribute
+    ALGORITHM:
+        Search trip by the tripid then amend finished attribute.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/finish', methods=['GET', 'POST'])
 def finish_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
@@ -307,6 +510,15 @@ def finish_trip(tripid):
     db.session.commit()
     return redirect(url_for('trips_blueprint.display_trip', tripid=trip.id))
 
+'''
+    DELETE: This function delete a trip
+    CALLING SEQUENCE: This route is access when a host click delete trip in the trip information page.
+    PURPOSE: To delete a trip.
+    DATA STRUCTURE:
+        Database to change delete a trip record.
+    ALGORITHM:
+        Search trip by the tripid then delete that record.
+'''
 @trips_blueprint.route('/trip/<int:tripid>/delete', methods=['GET', 'POST'])
 def delete_trip(tripid):
     trip = Trip.query.filter_by(id=tripid).first()
