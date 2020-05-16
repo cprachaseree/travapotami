@@ -20,7 +20,15 @@ trip_type = [('Relaxing', 'Relaxing'),
              ('Foodies', 'Foodies'),
              ('Fast-paced', 'Fast-paced'),
              ('Slow-life', 'Slow-life')]
-
+'''
+    TRIPFORM: Form that needs to be filled out whenever the user is creating a new trip.
+    CALLING SEQUENCE: Called on 'Create Trip' button after the trips tab is pressed.
+    PURPOSE: Getting information from the user to design the trip.
+    DATA STRUCTURES: SelectField with choices as a list of tuples, TextAreaFields for plain text
+                    DateFields, DecimalField, SelectMultipleField with list of tuples as choices
+                    and SubmitField.
+    
+'''
 
 class TripForm(FlaskForm):
 
@@ -32,6 +40,16 @@ class TripForm(FlaskForm):
     triptype = SelectMultipleField('Trip Types', choices=trip_type, validators=[DataRequired()])
     submit = SubmitField('Create')
 
+
+'''
+    REGISTRATIONFORM: Form that needs to be filled out whenever a new user wants to create an account.
+    CALLING SEQUENCE: Called on 'Sign up' button.
+    PURPOSE: Getting information from the user to create the new user and put it into the database.
+    DATA STRUCTURES: SelectField with choices as a list of tuples, StringField for plain text
+                    DateFields, PasswordField, FileField to upload the profile picture
+                    and SubmitField.
+
+'''
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -57,13 +75,29 @@ class RegistrationForm(FlaskForm):
     ])
     submit = SubmitField('Register')
 
+'''
+    LOGINFORM: Form that needs to be filled out whenever the user is logging in.
+    CALLING SEQUENCE: Called on 'Login' button.
+    PURPOSE: Getting information from the user to verify against information in the database.
+    DATA STRUCTURES: StringField for plain text, PasswordField and SubmitField.
+'''
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-
+'''
+    UPDATEACCOUNTINFO: Form that needs to be filled out whenever the user wants to edit their account information.
+    CALLING SEQUENCE: Called on 'Edit Account' button.
+    PURPOSE: Getting information from the user to change their account information.
+    DATA STRUCTURES: SelectField with choices as a list of tuples, StringField for plain text
+                    DateFields, PasswordField, FileField to upload the profile picture
+                    and SubmitField.
+    ALGORITHM: If the user changes the information from any of the fields, these
+                will be updated, however if the user does not change the information, they 
+                will remain the same in the database.
+'''
 class UpdateAccountInfo(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -85,12 +119,25 @@ class UpdateAccountInfo(FlaskForm):
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Update')
 
-
+'''
+    FORGOTPASSWORDFORM: Form that needs to be filled out whenever the user forgets his or her password.
+    CALLING SEQUENCE: Called on 'Forgot Password' button.
+    PURPOSE: Authentication of the user to change password.
+    DATA STRUCTURES: StringField for plain text and SubmitField.
+    ALGORITHM: The user will need to input his or her passport number as well as the email
+                in order to be able to change the password. 
+'''
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     passport_number = StringField('Passport number', validators=[DataRequired()])
     submit = SubmitField('Request Change Password')
 
+'''
+    NEWPASSWORD: Form that needs to be filled out when updating the password
+    CALLING SEQUENCE: Called after authentication of user when password is forgotten.
+    PURPOSE: Updating password.
+    DATA STRUCTURES: PasswordField and SubmitField.
+'''
 
 class NewPassword(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
@@ -98,12 +145,22 @@ class NewPassword(FlaskForm):
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Confirm New Password')
 
-
+'''
+    SEARCHUSERSFORM: Form that needs to be filled out when trying to find a user.
+    CALLING SEQUENCE: Called on 'Find friends' button.
+    PURPOSE: To find a user in order to see their profile.
+    DATA STRUCTURES: String field for plain text and SubmitField.
+'''
 class SearchUsersForm(FlaskForm):
     username = StringField('Search User by username', validators=[DataRequired()])
     submit = SubmitField('Search')
 
-
+'''
+    UPDATEIMAGE: Form to change profile picture
+    CALLING SEQUENCE: Called on 'Edit Account' button.
+    PURPOSE: To change profile picture.
+    DATA STRUCTURES: File field for jpg or png files and SubmitField.
+'''
 class UpdateImage(FlaskForm):
     photo = FileField('New Profile Photo', validators=[
         FileRequired(),
@@ -111,6 +168,12 @@ class UpdateImage(FlaskForm):
     ])
     submit = SubmitField('Upload')
 
+'''
+    GIVERATINGS: Form that needs to be filled out whenever giving out rating to other users.
+    CALLING SEQUENCE: Called on 'Rate this user' button.
+    PURPOSE: To rate a user based on their friendliness, cleanliness, timeliness and foodies.
+    DATA STRUCTURES: Select field with list of tuples as choices and SubmitField.
+'''
 
 class GiveRatings(FlaskForm):
     friendliness = SelectField('Friendliness', choices=[(1, 1.0),
@@ -135,6 +198,12 @@ class GiveRatings(FlaskForm):
                                               (5, 5.0)])
     submit = SubmitField('Rate')
 
+'''
+    SEARCHTRIPFORM: Form that needs to be filled out when trying to find a user.
+    CALLING SEQUENCE: Called on click of 'Join a trip' button.
+    PURPOSE: To find a trip with based on differnet criteria such as destination, macimum budget or trip type.
+    DATA STRUCTURES: SelectField and SelectMultipleField with list of tuples as choices, DecimalField and SubmitField.
+'''
 
 class SearchTripsForm(FlaskForm):
     destination = SelectField('Destination', choices=countires, validators=[DataRequired()])
@@ -142,6 +211,17 @@ class SearchTripsForm(FlaskForm):
     triptype = SelectMultipleField('Trip Type (Optional)', choices=trip_type)
     submit = SubmitField('Search')
 
+
+'''
+    UPDATETRIP: Form that needs to be filled out whenever the host of a trip wants to edit information of the trip.
+    CALLING SEQUENCE: Called on click of 'Edit trip' button.
+    PURPOSE: To update any information of the trip that the user might want to change.
+    DATA STRUCTURES: SelectField and SelectMultipleField with list of tuples as choices, DecimalField, TextAreaField
+                    for plain text, DateField, and SubmitField.
+    ALGORITHM:If the user changes the information from any of the fields, these
+                will be updated, however if the user does not change the information, they 
+                will remain the same in the database.
+'''
 
 class UpdateTrip(FlaskForm):
     destination = SelectField('Destination', choices=countires)
@@ -154,6 +234,14 @@ class UpdateTrip(FlaskForm):
     triptype = SelectMultipleField('Trip Types', choices=trip_type)
     submit = SubmitField('Update')
 
+'''
+    ADDHOSTPARTICIPANT: Form that needs to be filled out after updating trip, in case the host wants to add
+                    another host or participant.
+    CALLING SEQUENCE: Called on click of 'Add' (hosts or participants) button.
+    PURPOSE: To add a new host or participant to a trip.
+    DATA STRUCTURES: StringField for plain text and SubmitField.
+    
+'''
 class AddHostParticipant(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     submit = SubmitField('Add')
