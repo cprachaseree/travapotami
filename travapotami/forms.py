@@ -1,3 +1,10 @@
+'''
+    FORMS MODULE: Module that combine all form related modules
+    CALLING SEQUENCE: Used to load or upload information to forms in specific routes
+    WHEN: Version 1 written 09-05-2020
+    PURPOSE: This module consists of classes that declare form types, inputs, and validations.
+'''
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, PasswordField, DecimalField, TextAreaField, SelectMultipleField
 from wtforms.fields.html5 import DateField
