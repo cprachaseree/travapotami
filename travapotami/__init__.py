@@ -1,3 +1,12 @@
+'''
+    INIT MODULE: Module to create the application instance and packs the whole application as a Python package.
+    PROGRAMMER: Chaichon Wongkham, Chaiyasait Prachaseree
+    CALLING SEQUENCE: Access automatically by flask when the app start
+    WHEN: Version 1 written 12-05-2020
+    PURPOSE: 
+        This module composed of the 'application factory' to create the application instance.
+        It also packs the whole application as a Python package for better organization.
+'''
 import os
 from flask import Flask, render_template
 from . import db
@@ -10,6 +19,18 @@ from .admin_views import MyModelView
 login_manager = LoginManager()
 bcrypt = Bcrypt()
 
+'''
+    CREATE_APP: This function is flask's 'application factory', return the app instance for an execution.
+    CALLING SEQUENCE: Automatically called by flask when start the app.
+    PURPOSE: To set necessary configurations and registering app components with the app instance before returning it.
+    DATA STRUCTURE: Flask's application object.
+    ALGORITHM:
+        Configure the app.
+        Check if there are test configurations and load it.
+        Registering CLI commands with the app.
+        Register all the blueprints with the app.
+        Register all database models with the app.
+'''
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
